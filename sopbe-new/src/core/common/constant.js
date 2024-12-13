@@ -4,7 +4,7 @@ export const database_urls = Object.freeze({
   db_name: process.env.DB_NAME || "heyreach",
 });
 
-export const statusCodes = {
+export const statusCodes = Object.freeze({
   ok: 200,
   created: 201,
   accepted: 202,
@@ -22,7 +22,7 @@ export const statusCodes = {
   notImplemented: 501,
   badGateway: 502,
   serviceUnavailable: 503,
-};
+})
 
 export const Message = {
   notFound: "Not Found",

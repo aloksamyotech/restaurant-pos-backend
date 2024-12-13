@@ -4,20 +4,18 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
-    firstname: {
+    name: {
       type: String,
       required: true,
       trim: true,
     },
-    lastname: {
+    role: {
       type: String,
       required: true,
+      enum : ['admin','chef','company'],
       trim: true,
     },
-    company: {
-      type: String,
-      default: null,
-    },
+    
     email: {
       type: String,
       required: true,
@@ -29,7 +27,12 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
+      default:null
     },
+    companyId: {
+      type : mongoose.Types.ObjectId,
+     
+    }
   },
   { timestamps: true },
 );
