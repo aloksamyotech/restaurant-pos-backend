@@ -7,6 +7,12 @@ import "dotenv/config"
 import responseInterceptor from './src/utils/responseInterceptor.js';
 
 import { userRouter } from './src/routes/routes.js';
+import { ingredientRouter } from './src/routes/routes.js';
+import { categoryRouter } from './src/routes/routes.js';
+import { itemRouter } from './src/routes/routes.js';
+import {modifierRouter } from './src/routes/routes.js';
+import {expenseTypeRouter } from './src/routes/routes.js';
+import {expenseRouter } from './src/routes/routes.js';
 
 const app = express();
 const PORT = (() => {
@@ -36,6 +42,12 @@ connectDB()
 app.use(responseInterceptor);
 
 app.use('/api/v1/user', userRouter)
+app.use('/api/v1/ingredient', ingredientRouter)
+app.use('/api/v1/category', categoryRouter)
+app.use('/api/v1/item', itemRouter)
+app.use('/api/v1/modifier', modifierRouter)
+app.use('/api/v1/expenseType', expenseTypeRouter)
+app.use('/api/v1/expense', expenseRouter)
 
 app.use(globalExceptionHandler);
 
