@@ -3,11 +3,11 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addIngredient = async (req) => {
-  const { ingredientName, cost,price, quantity,unit } = req.body;
+  const { name,desc, cost,price, quantity,unit,isAvailable } = req.body;
 
-  // TODO: Validation
+ 
 
-  const isIngredientAlreadyExist = await Ingredient.findOne({ ingredientName });
+  const isIngredientAlreadyExist = await Ingredient.findOne({ name });
 
   if (isIngredientAlreadyExist) {
     throw new CustomError(
@@ -18,7 +18,7 @@ export const addIngredient = async (req) => {
   }
 
   const ingredient = await Ingredient .create({
-    ingredientName, cost,price, quantity,unit
+    name,desc, cost,price, quantity,unit,isAvailable
   });
 
   const createdIngredient  = await Ingredient .findById(ingredient ._id);
@@ -40,7 +40,7 @@ export const deleteIngredient = async (req) => {
   const { id } = req.params; 
 
  
-  // const ingredient = await Ingredient.findById(id);
+
   const ingredient=await Ingredient.findByIdAndDelete(id);
   if (!ingredient) {
     throw new CustomError(

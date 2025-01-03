@@ -3,7 +3,7 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addModifier = async (req) => {
-  const { name, desc, cost, price } = req.body;
+  const { name, desc, cost, price,isAvailable } = req.body;
 
   
   const isModifierAlreadyExist = await Modifier.findOne({ name });
@@ -17,10 +17,10 @@ export const addModifier = async (req) => {
   }
 
  
-  const modifier = await Modifier.create({ name, desc, cost, price });
+  const modifier = await Modifier.create({ name, desc, cost, price,isAvailable });
 
   const createdModifier = await Modifier.findById(modifier._id);
-
+ 
   if (!createdModifier) {
     throw new CustomError(
       statusCodes?.serviceUnavailable,

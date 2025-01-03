@@ -9,19 +9,14 @@ const expenseSchema = new Schema(
     },
     desc: {
       type: String,
-      required: true,
       trim: true,
     },
-    expenseType: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+   
     amount: {
       type: Number,
       required: true,
     },
-    expenseTypeId: {
+    expenseNameId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ExpenseType",
       required: true,

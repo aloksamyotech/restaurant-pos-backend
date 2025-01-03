@@ -13,14 +13,19 @@ import { itemRouter } from './src/routes/routes.js';
 import {modifierRouter } from './src/routes/routes.js';
 import {expenseTypeRouter } from './src/routes/routes.js';
 import {expenseRouter } from './src/routes/routes.js';
+import path from 'path';
 
 const app = express();
 const PORT = (() => {
     const env = process.env.ENV;
     return env === 'development' ? 7200 : 4545;
 })();
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+
+
 app.use(corsConfig);
 
 app.use((req, res, next) => {

@@ -10,18 +10,19 @@ const categorySchema = new Schema(
     },
     desc: {
       type: String,
-      required: true,
       trim: true,
     },
     
     isAvailable: {
       type: Boolean,
-      required: true,
+      default:true
+      
       
     },
-    image: {
+    categoryImage: {
       type: String,
-      required: true,
+      
+      
     },
     
    },

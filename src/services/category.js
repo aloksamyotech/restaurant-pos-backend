@@ -3,9 +3,10 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addCategory  = async (req) => {
-  const { categoryName,desc, isAvailable, image} = req.body;
+  
+  const { categoryName,desc, isAvailable} = req.body;
 
-  // TODO: Validation
+  
 
   const isCategoryAlreadyExist = await Category.findOne({ categoryName });
 
@@ -16,12 +17,14 @@ export const addCategory  = async (req) => {
       errorCodes?.already_exist,
     );
   }
+  const categoryImage = req.file ? `/uploads/${req.file.filename}` : null;
+ 
 
   const category = await Category.create({
     categoryName,
     desc, 
     isAvailable, 
-    image,
+    categoryImage
   });
 
   const createdCategory  = await Category.findById(category._id);

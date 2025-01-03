@@ -9,8 +9,7 @@ const expenseTypeSchema = new Schema(
     },
     desc: {
       type: String,
-      required: true,
-      trim: true,
+     trim: true,
     },
     available: {
       type: Boolean,
