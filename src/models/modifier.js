@@ -9,7 +9,6 @@ const modifierSchema = new Schema(
     },
     desc: {
       type: String,
-      required: true,
       trim: true,
     },
     cost: {
@@ -20,6 +19,11 @@ const modifierSchema = new Schema(
       type: Number,
       required: true,
     },
+    isAvailable: {
+      type: Boolean,
+      default:true,
+      
+      }
   },
   { timestamps: true }
 );
