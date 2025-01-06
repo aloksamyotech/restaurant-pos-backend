@@ -3,24 +3,15 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addExpense = async (req) => {
-  const { name, desc, expenseType, amount, expenseTypeId } = req.body;
+  const { name, desc,amount, expenseNameId } = req.body;
 
-  const isExpenseAlreadyExist = await Expense.findOne({ name, expenseType });
-
-  if (isExpenseAlreadyExist) {
-    throw new CustomError(
-      statusCodes?.conflict,
-      Message?.alreadyExist,
-      errorCodes?.already_exist
-    );
-  }
+ 
 
   const expense = await Expense.create({
     name,
     desc,
-    expenseType,
     amount,
-    expenseTypeId,
+    expenseNameId,
   });
 
   const createdExpense = await Expense.findById(expense._id);
@@ -60,7 +51,9 @@ export const deleteExpense = async (req) => {
 };
 
 export const getExpenses = async () => {
-  const expenses = await Expense.find({ active: true });
+  
+  const expenses = await Expense.find({ active: true }).populate('expenseNameId',"expenseName");
+  console.log("expenses", expenses)
   return expenses;
 };
 

@@ -3,11 +3,11 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addItem  = async (req) => {
-  const { itemName,desc, active, image,itemId,ingredient,price ,cost,totalServing,rating,comment,discount,categoryName} = req.body;
+  const { name, desc, available, image, discount, comment, rating, totalServing, cost, price, ingredients, categoryId} = req.body;
 
-  // TODO: Validation
 
-  const isItemAlreadyExist = await Item.findOne({ itemName });
+
+  const isItemAlreadyExist = await Item.findOne({ name });
 
   if (isItemAlreadyExist) {
     throw new CustomError(
@@ -18,10 +18,11 @@ export const addItem  = async (req) => {
   }
 
   const item = await Item.create({
-    itemName,desc, active, image,itemId,ingredient,price ,cost,totalServing,rating,comment,discount,categoryName
+    name, desc, available, image, discount, comment, rating, totalServing, cost, price, ingredientId:ingredients, categoryId
   });
 
   const createdItem  = await Item.findById(item._id);
+ 
   
 
   if (!createdItem) {
@@ -59,7 +60,8 @@ export const deleteItem = async (req) => {
 };
 
 export const getItem = async () => {
-  const item = await Item.find(); 
+  const item = await Item.find().populate('categoryId',"categoryName").populate('ingredientId',"name");
+ 
   return item;
 };
 

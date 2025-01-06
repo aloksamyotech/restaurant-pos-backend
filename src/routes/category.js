@@ -1,16 +1,18 @@
 import { Router } from "express";
 import { asyncHandler } from "../utils/asyncWrapper.js";
+import { upload } from "../middlewares/multerConfig.js";
 const router = Router();
 
-// controller
-import { categoryController } from "../controllers/controllers.js";
+
+import {categoryController} from "../controllers/controllers.js";
 
 
-router.post("/addCategory", asyncHandler(categoryController.addCategory));
+router.post("/addCategory",upload.single("categoryImage"), asyncHandler(categoryController.addCategory));  
 
 router.delete("/deleteCategory/:id", asyncHandler(categoryController.deleteCategory));
 router.get("/getCategory/", asyncHandler(categoryController.getCategory));
-router.put("/updateCategory/:id", asyncHandler(categoryController.updateCategory));
+router.put("/updateCategory/:id", upload.single("categoryImage"), asyncHandler(categoryController.updateCategory));
+
 
 
 

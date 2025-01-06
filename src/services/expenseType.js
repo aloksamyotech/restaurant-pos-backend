@@ -1,9 +1,12 @@
+
 import { ExpenseType } from "../models/expenseType.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addExpenseType = async (req) => {
   const { expenseName, desc, available = true } = req.body;
+
+  
 
   
   const isExpenseTypeAlreadyExist = await ExpenseType.findOne({ expenseName, isDeleted: false });

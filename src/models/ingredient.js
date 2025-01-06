@@ -3,9 +3,13 @@ import mongoose, { Schema } from "mongoose";
 
 const ingredientSchema = new Schema(
   {
-    ingredientName: {
+    name: {
       type: String,
       required: true,
+      trim: true,
+    },
+    desc: {
+      type: String,
       trim: true,
     },
     cost: {
@@ -17,7 +21,7 @@ const ingredientSchema = new Schema(
     price: {
       type: Number,
       required: true,
-      unique: true,
+      
     },
     quantity: {
       type: Number,
@@ -28,14 +32,13 @@ const ingredientSchema = new Schema(
         required: true, 
         enum : ['kg','ltr','pieces'],
       },
-    refreshToken: {
-      type: String,
-      default:null
-    },
-    companyId: {
-      type : mongoose.Types.ObjectId,
-     
-    }
+      isAvailable: {
+        type: Boolean,
+        default:true,
+        
+        }
+  
+   
   },
   { timestamps: true },
 );
