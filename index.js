@@ -13,6 +13,7 @@ import { itemRouter } from './src/routes/routes.js';
 import {modifierRouter } from './src/routes/routes.js';
 import {expenseTypeRouter } from './src/routes/routes.js';
 import {expenseRouter } from './src/routes/routes.js';
+import {orderRouter } from './src/routes/routes.js';
 import path from 'path';
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/api/v1/item', itemRouter)
 app.use('/api/v1/modifier', modifierRouter)
 app.use('/api/v1/expenseType', expenseTypeRouter)
 app.use('/api/v1/expense', expenseRouter)
+app.use('/api/v1/order', orderRouter)
 
 app.use(globalExceptionHandler);
 
