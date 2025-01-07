@@ -7,6 +7,7 @@ import modifierController from "./modifier.js";
 import expenseTypeController from "./expenseType.js";
 import expenseController from "./expense.js";
 import orderController from "./order.js";
+import invoiceController from "./invoice.js";
 
 
-export { userController,ingredientController,categoryController,itemController,modifierController,expenseTypeController,expenseController,orderController  };
+export { userController,ingredientController,categoryController,itemController,modifierController,expenseTypeController,expenseController,orderController,invoiceController  };

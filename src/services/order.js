@@ -27,46 +27,33 @@ const order = await Order.create({
 };
 
 
-export const deleteOrder= async (req) => {
-  const { id } = req.params; 
 
- 
-  const item = await Item.findByIdAndDelete(id);
-  if (!item) {
-    throw new CustomError(
-      statusCodes?.notFound,
-      Message?.notFound,
-      errorCodes?.not_found
-    );
-  }
-
-
-  
-
-  return {
-    message: Message?.deletedSuccessfully,
-    itemId: id,
-  };
-};
 
 export const getOrder= async () => {
   const order = await Order.find();
  
   return order;
 };
-
-export const updateOrder= async (id, updatedData) => {
-  
-  const item = await Item.findByIdAndUpdate(id, updatedData, { new: true });
-
-  if (!item) {
+export const getOrderbyId= async (req) => {
+    const {id} = req.params;
+    if(!id){
+        throw new CustomError(
+            statusCodes?.badRequest,
+            Message?.idRequired,
+            errorCodes?.id_required
+          );
+    }
+  const order = await Order.findOne({_id:id});
+  if (!order) {
     throw new CustomError(
       statusCodes?.notFound,
       "Order not found",
       errorCodes?.not_found,
     );
   }
-
-  return item;
+ 
+  return order;
 };
+
+
 
