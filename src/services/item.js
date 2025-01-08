@@ -2,8 +2,22 @@ import { Item } from "../models/item.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
-export const addItem  = async (req) => {
-  const { name, desc, available, image, discount, comment, rating, totalServing, cost, price, ingredients, categoryId} = req.body;
+
+export const addItem = async (req) => {
+  const {
+    name,
+    desc,
+    available,
+    image,
+    discount,
+    comment,
+    rating,
+    totalServing,
+    cost,
+    price,
+    ingredients,
+    categoryId,
+  } = req?.body;
 
 
 
@@ -13,34 +27,41 @@ export const addItem  = async (req) => {
     throw new CustomError(
       statusCodes?.conflict,
       Message?.alreadyExist,
-      errorCodes?.already_exist,
+      errorCodes?.already_exist
     );
   }
 
   const item = await Item.create({
-    name, desc, available, image, discount, comment, rating, totalServing, cost, price, ingredientId:ingredients, categoryId
+    name,
+    desc,
+    available,
+    image,
+    discount,
+    comment,
+    rating,
+    totalServing,
+    cost,
+    price,
+    ingredientId: ingredients,
+    categoryId,
   });
 
-  const createdItem  = await Item.findById(item._id);
- 
-  
+  const createdItem = await Item.findById(item._id);
 
   if (!createdItem) {
     return new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
-      errorCodes?.service_unavailable,
+      errorCodes?.service_unavailable
     );
   }
 
-  return createdItem ;
+  return createdItem;
 };
 
-
 export const deleteItem = async (req) => {
-  const { id } = req.params; 
+  const { id } = req.params;
 
- 
   const item = await Item.findByIdAndDelete(id);
   if (!item) {
     throw new CustomError(
@@ -50,9 +71,6 @@ export const deleteItem = async (req) => {
     );
   }
 
-
-  
-
   return {
     message: Message?.deletedSuccessfully,
     itemId: id,
@@ -60,23 +78,23 @@ export const deleteItem = async (req) => {
 };
 
 export const getItem = async () => {
-  const item = await Item.find().populate('categoryId',"categoryName").populate('ingredientId',"name");
- 
+  const item = await Item.find()
+    .populate("categoryId", "categoryName")
+    .populate("ingredientId", "name");
+
   return item;
 };
 
 export const updateItem = async (id, updatedData) => {
-  
   const item = await Item.findByIdAndUpdate(id, updatedData, { new: true });
 
   if (!item) {
     throw new CustomError(
       statusCodes?.notFound,
       "Item not found",
-      errorCodes?.not_found,
+      errorCodes?.not_found
     );
   }
 
   return item;
 };
-
