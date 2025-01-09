@@ -3,12 +3,12 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addOrder = async (req) => {
-  const {customer, employee, items, status, expectedTime, totalPrice, discount, tax, paymentStatus, chef, type} = req.body;
+  const {customer, employee, items, status, expectedTime, totalPrice, discount, tax, paymentStatus, chef, type,paymentMode} = req.body;
 
 
 
 const order = await Order.create({
-    customer, employee, items, status, expectedTime, totalPrice, discount, tax, paymentStatus, chef, type
+    customer, employee, items, status, expectedTime, totalPrice, discount, tax, paymentStatus, chef, type,paymentMode
   });
 
   const createdOrder = await Order.findById(order._id);
