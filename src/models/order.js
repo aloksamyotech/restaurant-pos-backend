@@ -38,6 +38,11 @@ const orderSchema = new Schema(
       type: Number,
       
     },
+    paymentMode:
+    {
+      type: String,
+      enum : ['Cash','UPI','Card'],
+    },
     chef: { 
       type: Number,
     },
