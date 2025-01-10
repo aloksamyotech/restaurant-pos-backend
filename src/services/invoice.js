@@ -3,10 +3,10 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addInvoice = async (req) => {
-    const {OrderId} = req?.body;
+    const {OrderId,items,amount,tax,discount,paymentMode,paymentStatus,customerName} = req?.body;
   
   const invoice = await Invoice.create({
-    OrderId
+    OrderId,items,amount,tax,discount,paymentMode,paymentStatus,customerName
     });
   
     const createdInvoice = await Invoice.findById(invoice._id);
@@ -26,7 +26,7 @@ export const addInvoice = async (req) => {
   
 
   export const getInvoicebyId= async (req) => {
-    const {id} = req.params;
+    const {id} = req?.params;
     if(!id){
         throw new CustomError(
             statusCodes?.badRequest,

@@ -8,6 +8,8 @@ import expenseTypeController from "./expenseType.js";
 import expenseController from "./expense.js";
 import orderController from "./order.js";
 import invoiceController from "./invoice.js";
+import customerController from "./customer.js";
+import paymentController from "./payment.js";
 
 
-export { userController,ingredientController,categoryController,itemController,modifierController,expenseTypeController,expenseController,orderController,invoiceController  };
+export { userController,ingredientController,categoryController,itemController,modifierController,expenseTypeController,expenseController,orderController,invoiceController,customerController,paymentController  };

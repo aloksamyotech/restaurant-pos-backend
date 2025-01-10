@@ -4,12 +4,10 @@ import mongoose, { Schema } from "mongoose";
 
 const orderSchema = new Schema(
   {
-    customer: {
-      type: String,
-      required: false,
-      
-      
-    },
+    customerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+      },
     employee: {
       type: String,
       
