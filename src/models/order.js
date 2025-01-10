@@ -41,7 +41,7 @@ const orderSchema = new Schema(
     paymentMode:
     {
       type: String,
-      enum : ['Cash','UPI'],
+      enum : ['Cash','UPI','Card'],
     },
     chef: { 
       type: Number,
