@@ -15,6 +15,8 @@ import {expenseTypeRouter } from './src/routes/routes.js';
 import {expenseRouter } from './src/routes/routes.js';
 import {orderRouter } from './src/routes/routes.js';
 import {invoiceRouter } from './src/routes/routes.js';
+import {customerRouter } from './src/routes/routes.js';
+import {paymentRouter } from './src/routes/routes.js';
 import path from 'path';
 
 const app = express();
@@ -57,6 +59,8 @@ app.use('/api/v1/expenseType', expenseTypeRouter)
 app.use('/api/v1/expense', expenseRouter)
 app.use('/api/v1/order', orderRouter)
 app.use('/api/v1/invoice', invoiceRouter)
+app.use('/api/v1/customer', customerRouter)
+app.use('/api/v1/payment', paymentRouter)
 
 app.use(globalExceptionHandler);
 
