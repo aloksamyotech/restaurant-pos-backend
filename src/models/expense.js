@@ -11,7 +11,7 @@ const expenseSchema = new Schema(
       type: String,
       trim: true,
     },
-   
+
     amount: {
       type: Number,
       required: true,
@@ -26,7 +26,7 @@ const expenseSchema = new Schema(
       default: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Expense = mongoose.model("Expense", expenseSchema);

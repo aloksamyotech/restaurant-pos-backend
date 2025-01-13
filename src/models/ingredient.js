@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
 const ingredientSchema = new Schema(
   {
     name: {
@@ -17,35 +16,26 @@ const ingredientSchema = new Schema(
       required: true,
       trim: true,
     },
-    
+
     price: {
       type: Number,
       required: true,
-      
     },
     quantity: {
       type: Number,
       required: [true, "quantity is required"],
     },
     unit: {
-        type: String,
-        required: true, 
-        enum : ['kg','ltr','pieces'],
-      },
-      isAvailable: {
-        type: Boolean,
-        default:true,
-        
-        }
-  
-   
+      type: String,
+      required: true,
+      enum: ["kg", "ltr", "pieces"],
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true },
 );
-
-
-
-
-
 
 export const Ingredient = mongoose.model("Ingredient", ingredientSchema);

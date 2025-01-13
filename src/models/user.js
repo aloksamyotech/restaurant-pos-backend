@@ -12,10 +12,10 @@ const userSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum : ['admin','chef','company'],
+      enum: ["admin", "chef", "company"],
       trim: true,
     },
-    
+
     email: {
       type: String,
       required: true,
@@ -27,12 +27,11 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
-      default:null
+      default: null,
     },
     companyId: {
-      type : mongoose.Types.ObjectId,
-     
-    }
+      type: mongoose.Types.ObjectId,
+    },
   },
   { timestamps: true },
 );

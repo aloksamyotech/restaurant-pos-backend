@@ -21,11 +21,10 @@ const modifierSchema = new Schema(
     },
     isAvailable: {
       type: Boolean,
-      default:true,
-      
-      }
+      default: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Modifier = mongoose.model("Modifier", modifierSchema);

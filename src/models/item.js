@@ -1,7 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
-
 const itemSchema = new Schema(
   {
     name: {
@@ -46,8 +44,8 @@ const itemSchema = new Schema(
       required: true,
       trim: true,
     },
-    ingredientId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' }],
-    
+    ingredientId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ingredient" }],
+
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -55,7 +53,7 @@ const itemSchema = new Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Item = mongoose.model("Item", itemSchema);

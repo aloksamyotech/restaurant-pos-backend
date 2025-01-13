@@ -2,7 +2,6 @@ import { Item } from "../models/item.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
-
 export const addItem = async (req) => {
   const {
     name,
@@ -19,15 +18,13 @@ export const addItem = async (req) => {
     categoryId,
   } = req?.body;
 
-
-
   const isItemAlreadyExist = await Item.findOne({ name });
 
   if (isItemAlreadyExist) {
     throw new CustomError(
       statusCodes?.conflict,
       Message?.alreadyExist,
-      errorCodes?.already_exist
+      errorCodes?.already_exist,
     );
   }
 
@@ -52,7 +49,7 @@ export const addItem = async (req) => {
     return new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
-      errorCodes?.service_unavailable
+      errorCodes?.service_unavailable,
     );
   }
 
@@ -67,7 +64,7 @@ export const deleteItem = async (req) => {
     throw new CustomError(
       statusCodes?.notFound,
       Message?.notFound,
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
 
@@ -92,7 +89,7 @@ export const updateItem = async (id, updatedData) => {
     throw new CustomError(
       statusCodes?.notFound,
       "Item not found",
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
 

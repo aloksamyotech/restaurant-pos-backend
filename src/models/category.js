@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
 const categorySchema = new Schema(
   {
     categoryName: {
@@ -12,22 +11,16 @@ const categorySchema = new Schema(
       type: String,
       trim: true,
     },
-    
+
     isAvailable: {
       type: Boolean,
-      default:true
-      
-      
+      default: true,
     },
     categoryImage: {
       type: String,
-      
-      
     },
-    
-   },
+  },
   { timestamps: true },
 );
-
 
 export const Category = mongoose.model("Category", categorySchema);

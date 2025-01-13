@@ -3,9 +3,7 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addExpense = async (req) => {
-  const { name, desc,amount, expenseNameId } = req.body;
-
- 
+  const { name, desc, amount, expenseNameId } = req.body;
 
   const expense = await Expense.create({
     name,
@@ -20,7 +18,7 @@ export const addExpense = async (req) => {
     throw new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
-      errorCodes?.service_unavailable
+      errorCodes?.service_unavailable,
     );
   }
 
@@ -33,14 +31,14 @@ export const deleteExpense = async (req) => {
   const expense = await Expense.findByIdAndUpdate(
     id,
     { active: false },
-    { new: true }
+    { new: true },
   );
 
   if (!expense) {
     throw new CustomError(
       statusCodes?.notFound,
       Message?.notFound,
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
 
@@ -51,20 +49,24 @@ export const deleteExpense = async (req) => {
 };
 
 export const getExpenses = async () => {
-  
-  const expenses = await Expense.find({ active: true }).populate('expenseNameId',"expenseName");
-  console.log("expenses", expenses)
+  const expenses = await Expense.find({ active: true }).populate(
+    "expenseNameId",
+    "expenseName",
+  );
+  console.log("expenses", expenses);
   return expenses;
 };
 
 export const updateExpense = async (id, updatedData) => {
-  const expense = await Expense.findByIdAndUpdate(id, updatedData, { new: true });
+  const expense = await Expense.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
 
   if (!expense) {
     throw new CustomError(
       statusCodes?.notFound,
       "Expense not found",
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
 

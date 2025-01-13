@@ -2,11 +2,8 @@ import { Category } from "../models/category.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
-export const addCategory  = async (req) => {
-  
-  const { categoryName,desc, isAvailable} = req.body;
-
-  
+export const addCategory = async (req) => {
+  const { categoryName, desc, isAvailable } = req.body;
 
   const isCategoryAlreadyExist = await Category.findOne({ categoryName });
 
@@ -18,17 +15,15 @@ export const addCategory  = async (req) => {
     );
   }
   const categoryImage = req.file ? `/uploads/${req.file.filename}` : null;
- 
 
   const category = await Category.create({
     categoryName,
-    desc, 
-    isAvailable, 
-    categoryImage
+    desc,
+    isAvailable,
+    categoryImage,
   });
 
-  const createdCategory  = await Category.findById(category._id);
-  
+  const createdCategory = await Category.findById(category._id);
 
   if (!createdCategory) {
     return new CustomError(
@@ -38,23 +33,20 @@ export const addCategory  = async (req) => {
     );
   }
 
-  return createdCategory ;
+  return createdCategory;
 };
 
-
 export const deleteCategory = async (req) => {
-  const { id } = req.params; 
+  const { id } = req.params;
 
- 
   const category = await Category.findById(id);
   if (!category) {
     throw new CustomError(
       statusCodes?.notFound,
       Message?.notFound,
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
-
 
   await Category.findByIdAndDelete(id);
 
@@ -65,13 +57,14 @@ export const deleteCategory = async (req) => {
 };
 
 export const getCategory = async () => {
-  const category = await Category.find(); 
+  const category = await Category.find();
   return category;
 };
 
 export const updateCategory = async (id, updatedData) => {
-  
-  const category = await Category.findByIdAndUpdate(id, updatedData, { new: true });
+  const category = await Category.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
 
   if (!category) {
     throw new CustomError(
@@ -83,4 +76,3 @@ export const updateCategory = async (id, updatedData) => {
 
   return category;
 };
-
