@@ -13,7 +13,12 @@ const fetchInvoice = async (req, res, next) => {
   res.status(statusCodes?.ok).send(invoice);
 };
 
+const fetchInvoiceByOrderId = async (req, res, next) => {
+  const invoice = await invoiceService?.getInvoiceByOrderId(req, res, next);
+  res.status(statusCodes?.ok).send(invoice);
+};
 export default {
   addInvoice,
   fetchInvoice,
+  fetchInvoiceByOrderId,
 };

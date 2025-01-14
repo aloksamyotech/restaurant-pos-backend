@@ -4,7 +4,7 @@ import CustomError from "../utils/exception.js";
 
 export const addInvoice = async (req) => {
   const {
-    OrderId,
+    orderId,
     paymentId,
     customerId,
     items,
@@ -17,7 +17,7 @@ export const addInvoice = async (req) => {
   } = req?.body;
 
   const invoice = await Invoice.create({
-    OrderId,
+    orderId,
     paymentId,
     customerId,
     items,
@@ -71,7 +71,24 @@ export const getInvoicebyId = async (req) => {
 
   return invoice;
 };
-export const getInvoices = async () => {
-  const invoices = await Invoice.find();
-  return invoices;
+
+export const getInvoiceByOrderId = async (req) => {
+  const { id } = req?.params;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.idRequired,
+      errorCodes?.id_required,
+    );
+  }
+  const invoice = await Invoice.findOne({ orderId: id });
+  if (!invoice) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Invoice not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return invoice;
 };
