@@ -3,9 +3,8 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addModifier = async (req) => {
-  const { name, desc, cost, price,isAvailable } = req.body;
+  const { name, desc, cost, price, isAvailable } = req.body;
 
-  
   const isModifierAlreadyExist = await Modifier.findOne({ name });
 
   if (isModifierAlreadyExist) {
@@ -16,11 +15,16 @@ export const addModifier = async (req) => {
     );
   }
 
- 
-  const modifier = await Modifier.create({ name, desc, cost, price,isAvailable });
+  const modifier = await Modifier.create({
+    name,
+    desc,
+    cost,
+    price,
+    isAvailable,
+  });
 
   const createdModifier = await Modifier.findById(modifier._id);
- 
+
   if (!createdModifier) {
     throw new CustomError(
       statusCodes?.serviceUnavailable,
@@ -35,13 +39,12 @@ export const addModifier = async (req) => {
 export const deleteModifier = async (req) => {
   const { id } = req.params;
 
-  
   const modifier = await Modifier.findByIdAndDelete(id);
   if (!modifier) {
     throw new CustomError(
       statusCodes?.notFound,
       Message?.notFound,
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
 
@@ -52,13 +55,14 @@ export const deleteModifier = async (req) => {
 };
 
 export const getModifiers = async () => {
-  const modifiers = await Modifier.find(); 
+  const modifiers = await Modifier.find();
   return modifiers;
 };
 
 export const updateModifier = async (id, updatedData) => {
-  
-  const modifier = await Modifier.findByIdAndUpdate(id, updatedData, { new: true });
+  const modifier = await Modifier.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
 
   if (!modifier) {
     throw new CustomError(

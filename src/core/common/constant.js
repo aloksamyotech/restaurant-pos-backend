@@ -22,7 +22,7 @@ export const statusCodes = Object.freeze({
   notImplemented: 501,
   badGateway: 502,
   serviceUnavailable: 503,
-})
+});
 
 export const Message = {
   notFound: "Not Found",

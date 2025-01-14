@@ -8,15 +8,12 @@ const addInvoice = async (req, res, next) => {
   res.status(statusCodes?.created).send(invoiceData);
 };
 
-const fetchInvoice= async  (req, res, next) => {
-  const invoice = await invoiceService?.getInvoicebyId(req, res, next); 
-  res.status(statusCodes?.ok).send(invoice); 
+const fetchInvoice = async (req, res, next) => {
+  const invoice = await invoiceService?.getInvoicebyId(req, res, next);
+  res.status(statusCodes?.ok).send(invoice);
 };
 
 export default {
-    addInvoice,
-    fetchInvoice,
-    
-    
-  
+  addInvoice,
+  fetchInvoice,
 };

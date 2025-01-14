@@ -1,34 +1,22 @@
 import mongoose, { Schema } from "mongoose";
 
-
-
 const customerSchema = new Schema(
   {
     customerName: {
       type: String,
-      
-      
-      
     },
-    email: {  
+    email: {
       type: String,
-    
-      
     },
-  
+
     phone: {
       type: Number,
-      
     },
     address: {
       type: String,
-      
     },
-    
-    
-    
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Customer = mongoose.model("Customer", customerSchema);

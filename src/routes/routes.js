@@ -10,4 +10,16 @@ import invoiceRouter from "./invoice.js";
 import customerRouter from "./customer.js";
 import paymentRouter from "./payment.js";
 
-export { userRouter,ingredientRouter,categoryRouter,itemRouter,modifierRouter,expenseTypeRouter,expenseRouter,orderRouter,invoiceRouter,customerRouter,paymentRouter  };
+export {
+  userRouter,
+  ingredientRouter,
+  categoryRouter,
+  itemRouter,
+  modifierRouter,
+  expenseTypeRouter,
+  expenseRouter,
+  orderRouter,
+  invoiceRouter,
+  customerRouter,
+  paymentRouter,
+};

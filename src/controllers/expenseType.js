@@ -21,7 +21,10 @@ const updateExpenseType = async (req, res, next) => {
   const { id } = req.params;
   const updatedData = req.body;
 
-  const updatedExpenseType = await expenseTypeService.updateExpenseType(id, updatedData);
+  const updatedExpenseType = await expenseTypeService.updateExpenseType(
+    id,
+    updatedData,
+  );
   res.status(statusCodes?.ok).send(updatedExpenseType);
 };
 

@@ -3,9 +3,7 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addIngredient = async (req) => {
-  const { name,desc, cost,price, quantity,unit,isAvailable } = req.body;
-
- 
+  const { name, desc, cost, price, quantity, unit, isAvailable } = req.body;
 
   const isIngredientAlreadyExist = await Ingredient.findOne({ name });
 
@@ -17,14 +15,19 @@ export const addIngredient = async (req) => {
     );
   }
 
-  const ingredient = await Ingredient .create({
-    name,desc, cost,price, quantity,unit,isAvailable
+  const ingredient = await Ingredient.create({
+    name,
+    desc,
+    cost,
+    price,
+    quantity,
+    unit,
+    isAvailable,
   });
 
-  const createdIngredient  = await Ingredient .findById(ingredient ._id);
-  
+  const createdIngredient = await Ingredient.findById(ingredient._id);
 
-  if (!createdIngredient ) {
+  if (!createdIngredient) {
     return new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
@@ -32,25 +35,20 @@ export const addIngredient = async (req) => {
     );
   }
 
-  return createdIngredient ;
+  return createdIngredient;
 };
 
-
 export const deleteIngredient = async (req) => {
-  const { id } = req.params; 
+  const { id } = req.params;
 
- 
-
-  const ingredient=await Ingredient.findByIdAndDelete(id);
+  const ingredient = await Ingredient.findByIdAndDelete(id);
   if (!ingredient) {
     throw new CustomError(
       statusCodes?.notFound,
       Message?.notFound,
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
-
-
 
   return {
     message: Message?.deletedSuccessfully,
@@ -59,13 +57,14 @@ export const deleteIngredient = async (req) => {
 };
 
 export const getIngredients = async () => {
-  const ingredients = await Ingredient.find(); 
+  const ingredients = await Ingredient.find();
   return ingredients;
 };
 
 export const updateIngredient = async (id, updatedData) => {
-  
-  const ingredient = await Ingredient.findByIdAndUpdate(id, updatedData, { new: true });
+  const ingredient = await Ingredient.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
 
   if (!ingredient) {
     throw new CustomError(
@@ -77,4 +76,3 @@ export const updateIngredient = async (id, updatedData) => {
 
   return ingredient;
 };
-

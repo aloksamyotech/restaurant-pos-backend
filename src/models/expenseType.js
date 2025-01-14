@@ -9,18 +9,18 @@ const expenseTypeSchema = new Schema(
     },
     desc: {
       type: String,
-     trim: true,
+      trim: true,
     },
     available: {
       type: Boolean,
-      default: true, 
+      default: true,
     },
     isDeleted: {
       type: Boolean,
-      default: false, 
+      default: false,
     },
   },
-  { timestamps: true } 
+  { timestamps: true },
 );
 
 export const ExpenseType = mongoose.model("ExpenseType", expenseTypeSchema);

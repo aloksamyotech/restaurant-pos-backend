@@ -3,16 +3,18 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addCustomer = async (req) => {
-  const { customerName,email, phone,address } = req?.body;
+  const { customerName, email, phone, address } = req?.body;
 
- const customer = await Customer .create({
-    customerName,email, phone,address 
+  const customer = await Customer.create({
+    customerName,
+    email,
+    phone,
+    address,
   });
 
-  const createdCustomer  = await Customer.findById(customer._id);
-  
+  const createdCustomer = await Customer.findById(customer._id);
 
-  if (!createdCustomer ) {
+  if (!createdCustomer) {
     return new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
@@ -20,44 +22,42 @@ export const addCustomer = async (req) => {
     );
   }
 
-  return createdCustomer ;
+  return createdCustomer;
 };
 
-
 export const deleteCustomer = async (req) => {
-  const { id } = req?.params; 
+  const { id } = req?.params;
 
- const customer=await Customer.findByIdAndDelete(id);
+  const customer = await Customer.findByIdAndDelete(id);
   if (!customer) {
     throw new CustomError(
       statusCodes?.notFound,
       Message?.notFound,
-      errorCodes?.not_found
+      errorCodes?.not_found,
     );
   }
 
-return {
+  return {
     message: Message?.deletedSuccessfully,
     customerId: id,
   };
 };
 
-
 export const getCustomers = async () => {
-  const customers = await Customer.find(); 
+  const customers = await Customer.find();
   return customers;
 };
 
-export const getCustomerbyId= async (req) => {
-    const {id} = req?.params;
-    if(!id){
-        throw new CustomError(
-            statusCodes?.badRequest,
-            Message?.idRequired,
-            errorCodes?.id_required
-          );
-    }
-  const customer = await Customer.findOne({_id:id});
+export const getCustomerbyId = async (req) => {
+  const { id } = req?.params;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.idRequired,
+      errorCodes?.id_required,
+    );
+  }
+  const customer = await Customer.findOne({ _id: id });
   if (!customer) {
     throw new CustomError(
       statusCodes?.notFound,
@@ -65,15 +65,14 @@ export const getCustomerbyId= async (req) => {
       errorCodes?.not_found,
     );
   }
- 
+
   return customer;
 };
-
-
 
 export const updateCustomer = async (id, updatedData) => {
-  
-  const customer = await Customer.findByIdAndUpdate(id, updatedData, { new: true });
+  const customer = await Customer.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
 
   if (!customer) {
     throw new CustomError(
@@ -85,4 +84,3 @@ export const updateCustomer = async (id, updatedData) => {
 
   return customer;
 };
-

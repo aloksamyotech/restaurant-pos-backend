@@ -3,7 +3,7 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const registerUser = async (req) => {
-  const { name, role,email, password } = req.body;
+  const { name, role, email, password } = req.body;
 
   // TODO: Validation
 
