@@ -12,6 +12,10 @@ router.delete(
 );
 router.get("/getCustomers/", asyncHandler(customerController.getCustomer));
 router.get(
+  "/getCustomerByPhone/:id",
+  asyncHandler(customerController.getCustomerByPhone),
+);
+router.get(
   "/fetchCustomer/:id",
   asyncHandler(customerController.fetchCustomer),
 );

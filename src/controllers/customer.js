@@ -17,6 +17,12 @@ const getCustomer = async (req, res, next) => {
   const customer = await customerService?.getCustomers(req, res, next);
   res.status(statusCodes?.ok).send(customer);
 };
+
+const getCustomerByPhone = async (req, res, next) => {
+  const customer = await customerService?.getCustomerByPhone(req, res, next);
+  res.status(statusCodes?.ok).send(customer);
+};
+
 const fetchCustomer = async (req, res, next) => {
   const customer = await customerService?.getCustomerbyId(req, res, next);
   res.status(statusCodes?.ok).send(customer);
@@ -40,4 +46,5 @@ export default {
   getCustomer,
   fetchCustomer,
   updateCustomer,
+  getCustomerByPhone,
 };

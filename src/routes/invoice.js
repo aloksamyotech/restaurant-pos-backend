@@ -6,5 +6,9 @@ import { invoiceController } from "../controllers/controllers.js";
 
 router.post("/addInvoice", asyncHandler(invoiceController.addInvoice));
 router.get("/fetchInvoice/:id", asyncHandler(invoiceController.fetchInvoice));
+router.get(
+  "/fetchInvoiceByOrderId/:id",
+  asyncHandler(invoiceController.fetchInvoiceByOrderId),
+);
 
 export default router;

@@ -47,7 +47,7 @@ export const addOrder = async (req) => {
 };
 
 export const getOrder = async () => {
-  const order = await Order.find();
+  const order = await Order.find().populate();
 
   return order;
 };
@@ -62,6 +62,7 @@ export const getOrderbyId = async (req) => {
     );
   }
   const order = await Order.findOne({ _id: id });
+
   if (!order) {
     throw new CustomError(
       statusCodes?.notFound,

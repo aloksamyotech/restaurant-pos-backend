@@ -68,6 +68,26 @@ export const getCustomerbyId = async (req) => {
 
   return customer;
 };
+export const getCustomerByPhone = async (req) => {
+  const { id } = req?.params;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.idRequired,
+      errorCodes?.id_required,
+    );
+  }
+  const customer = await Customer.find({ phone: id });
+  if (!customer) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Customer not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return customer;
+};
 
 export const updateCustomer = async (id, updatedData) => {
   const customer = await Customer.findByIdAndUpdate(id, updatedData, {
