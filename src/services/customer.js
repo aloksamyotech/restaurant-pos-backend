@@ -3,26 +3,38 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addCustomer = async (req) => {
-  const { customerName, email, phone, address } = req?.body;
+  try {
+    const { customerName, email, phone, address } = req?.body;
 
-  const customer = await Customer.create({
-    customerName,
-    email,
-    phone,
-    address,
-  });
+    const oldCustomer = await Customer.findOne({ phone });
+    if (oldCustomer) {
+      return oldCustomer;
+    }
 
-  const createdCustomer = await Customer.findById(customer._id);
+    const customer = await Customer.create({
+      customerName,
+      email,
+      phone,
+      address,
+    });
 
-  if (!createdCustomer) {
-    return new CustomError(
-      statusCodes?.serviceUnavailable,
-      Message?.serverError,
-      errorCodes?.service_unavailable,
+    const createdCustomer = await Customer.findById(customer?._id);
+    if (!createdCustomer) {
+      throw new CustomError(
+        statusCodes?.serviceUnavailable,
+        Message?.serverError,
+        errorCodes?.service_unavailable,
+      );
+    }
+
+    return createdCustomer;
+  } catch (error) {
+    throw new CustomError(
+      statusCodes?.internalServerError,
+      error.message || Message?.serverError,
+      errorCodes?.internal_server_error,
     );
   }
-
-  return createdCustomer;
 };
 
 export const deleteCustomer = async (req) => {
@@ -77,7 +89,7 @@ export const getCustomerByPhone = async (req) => {
       errorCodes?.id_required,
     );
   }
-  const customer = await Customer.find({ phone: id });
+  const customer = await Customer.findOne({ phone: id });
   if (!customer) {
     throw new CustomError(
       statusCodes?.notFound,
