@@ -36,6 +36,9 @@ const orderSchema = new Schema(
     chef: {
       type: Number,
     },
+    phone: {
+      type: Number,
+    },
     type: {},
   },
   { timestamps: true },

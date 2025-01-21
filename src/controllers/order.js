@@ -21,6 +21,10 @@ const fetchOrder = async (req, res, next) => {
   const order = await orderService?.getOrderbyId(req, res, next);
   res.status(statusCodes?.ok).send(order);
 };
+const getOrderByCustomerId = async (req, res, next) => {
+  const order = await orderService?.getOrderByCustomerId(req, res, next);
+  res.status(statusCodes?.ok).send(order);
+};
 
 const updateOrder = async (req, res, next) => {
   const { id } = req?.params;
@@ -37,4 +41,5 @@ export default {
   getOrder,
   fetchOrder,
   updateOrder,
+  getOrderByCustomerId,
 };
