@@ -7,16 +7,16 @@ export const addItem = async (req) => {
     name,
     desc,
     available,
-    image,
+
     discount,
     comment,
     rating,
     totalServing,
     cost,
     price,
-    ingredients,
     categoryId,
   } = req?.body;
+  const ingredients = JSON.parse(req.body.ingredients);
 
   const isItemAlreadyExist = await Item.findOne({ name });
 
@@ -28,11 +28,12 @@ export const addItem = async (req) => {
     );
   }
 
+  const itemImage = req.file ? `/uploads/${req.file.filename}` : null;
   const item = await Item.create({
     name,
     desc,
     available,
-    image,
+    itemImage,
     discount,
     comment,
     rating,

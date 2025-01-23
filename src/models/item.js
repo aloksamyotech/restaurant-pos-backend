@@ -15,7 +15,7 @@ const itemSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    image: {
+    itemImage: {
       type: String,
     },
     discount: {

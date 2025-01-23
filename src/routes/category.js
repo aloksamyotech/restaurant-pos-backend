@@ -15,7 +15,9 @@ router.delete(
   "/deleteCategory/:id",
   asyncHandler(categoryController.deleteCategory),
 );
+
 router.get("/getCategory/", asyncHandler(categoryController.getCategory));
+
 router.put(
   "/updateCategory/:id",
   upload.single("categoryImage"),
