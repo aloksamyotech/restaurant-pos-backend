@@ -49,11 +49,10 @@ export const deleteExpense = async (req) => {
 };
 
 export const getExpenses = async () => {
-  const expenses = await Expense.find({ active: true }).populate(
-    "expenseNameId",
-    "expenseName",
-  );
-  console.log("expenses", expenses);
+  const expenses = await Expense.find({ active: true })
+    .populate("expenseNameId", "expenseName")
+    .sort({ createdAt: -1 });
+
   return expenses;
 };
 

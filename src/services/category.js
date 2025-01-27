@@ -57,7 +57,7 @@ export const deleteCategory = async (req) => {
 };
 
 export const getCategory = async () => {
-  const category = await Category.find();
+  const category = await Category.find().sort({ createdAt: -1 });
   return category;
 };
 

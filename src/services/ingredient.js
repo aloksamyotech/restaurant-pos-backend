@@ -57,7 +57,7 @@ export const deleteIngredient = async (req) => {
 };
 
 export const getIngredients = async () => {
-  const ingredients = await Ingredient.find();
+  const ingredients = await Ingredient.find().sort({ createdAt: -1 });
   return ingredients;
 };
 

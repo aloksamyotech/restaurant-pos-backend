@@ -55,7 +55,7 @@ export const deleteModifier = async (req) => {
 };
 
 export const getModifiers = async () => {
-  const modifiers = await Modifier.find();
+  const modifiers = await Modifier.find().sort({ createdAt: -1 });
   return modifiers;
 };
 
