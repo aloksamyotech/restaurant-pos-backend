@@ -78,7 +78,8 @@ export const deleteItem = async (req) => {
 export const getItem = async () => {
   const item = await Item.find()
     .populate("categoryId", "categoryName")
-    .populate("ingredientId", "name");
+    .populate("ingredientId", "name")
+    .sort({ createdAt: -1 });
 
   return item;
 };

@@ -6,13 +6,19 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+
       trim: true,
     },
     role: {
       type: String,
-      required: true,
-      enum: ["admin", "chef", "company"],
+
+      enum: ["superAdmin"],
+      trim: true,
+    },
+    gender: {
+      type: String,
+
+      enum: ["Male", "Female"],
       trim: true,
     },
 

@@ -62,7 +62,7 @@ export const getExpenseTypes = async () => {
   const expenseTypes = await ExpenseType.find({
     isDeleted: false,
     available: true,
-  });
+  }).sort({ createdAt: -1 });
   return expenseTypes;
 };
 

@@ -12,9 +12,12 @@ const userLogin = async (req, res, next) => {
   const data = await userService.loginUser(req, res, next);
   res
     .status(statusCodes?.ok)
-    .cookie("accessToken", data?.accessToken, data?.options)
-    .cookie("refreshToken", data?.refreshToken, data?.options)
-    .send(data?.loginUser);
+
+    .send({
+      accessToken: data?.accessToken,
+      refreshToken: data?.refreshToken,
+      loginUser: data?.loginUser,
+    });
 };
 
 export default {
