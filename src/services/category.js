@@ -57,11 +57,16 @@ export const deleteCategory = async (req) => {
 };
 
 export const getCategory = async () => {
-  const category = await Category.find();
+
+  const category = await Category.find().sort({ createdAt: -1 });
   return category;
 };
 
 export const updateCategory = async (id, updatedData) => {
+  
+ 
+  
+  
   const category = await Category.findByIdAndUpdate(id, updatedData, {
     new: true,
   });

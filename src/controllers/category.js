@@ -21,7 +21,7 @@ const getCategory = async (req, res, next) => {
 const updateCategory = async (req, res, next) => {
   const { id } = req.params;
   const updatedData = req.body;
-
+  updatedData.categoryImage = req.file ? `/uploads/${req.file.filename}` : null;
   const updatedCategory = await categoryService.updateCategory(id, updatedData);
 
   res.status(statusCodes?.ok).send(updatedCategory);

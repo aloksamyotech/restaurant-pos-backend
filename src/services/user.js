@@ -66,7 +66,7 @@ export const loginUser = async (req) => {
   if (!user) {
     throw new CustomError(
       statusCodes?.notFound,
-      Message?.notFound,
+      Message?.userNotFound,
       errorCodes?.not_found,
     );
   }
