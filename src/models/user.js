@@ -4,20 +4,29 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
-    name: {
+    firstName: {
       type: String,
-
+      required: true,
       trim: true,
+    },
+    lastName: {
+      type: String,
+      
+      trim: true,
+    },
+    phoneNumber: {
+      type: Number,
+      required: true,
     },
     role: {
       type: String,
 
-      enum: ["superAdmin"],
+      enum: ["Manager","Order Taker"],
       trim: true,
     },
     gender: {
       type: String,
-
+      required: true,
       enum: ["Male", "Female"],
       trim: true,
     },
@@ -30,6 +39,11 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+    },
+    address: {
+      type: String,
+      required: true,
+      
     },
     refreshToken: {
       type: String,

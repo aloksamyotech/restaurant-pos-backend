@@ -2,14 +2,14 @@ import { User } from "../models/user.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
-export const registerUser = async (req) => {
-  const { name, role, email, password } = req.body;
+export const addEmployee = async (req) => {
+  const { firstName,lastName, role, email, password,gender,address,phoneNumber } = req.body;
 
   // TODO: Validation
 
-  const isUserAlreadyExist = await User.findOne({ email });
+  const isEmployeeAlreadyExist = await User.findOne({ email });
 
-  if (isUserAlreadyExist) {
+  if (isEmployeeAlreadyExist) {
     throw new CustomError(
       statusCodes?.conflict,
       Message?.alreadyExist,
@@ -17,18 +17,15 @@ export const registerUser = async (req) => {
     );
   }
 
-  const user = await User.create({
-    name,
-    role,
-    email,
-    password,
+  const employee = await User.create({
+    firstName,lastName, role, email, password,gender,address,phoneNumber
   });
 
-  const createdUser = await User.findById(user._id).select(
+  const createdEmployee = await User.findById(employee._id).select(
     "-password -refreshToken",
   );
 
-  if (!createdUser) {
+  if (!createdEmployee) {
     return new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
@@ -36,7 +33,7 @@ export const registerUser = async (req) => {
     );
   }
 
-  return createdUser;
+  return createdEmployee;
 };
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -66,7 +63,7 @@ export const loginUser = async (req) => {
   if (!user) {
     throw new CustomError(
       statusCodes?.notFound,
-      Message?.notFound,
+      Message?.userNotFound,
       errorCodes?.not_found,
     );
   }
