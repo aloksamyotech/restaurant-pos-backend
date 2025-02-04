@@ -5,7 +5,13 @@ const router = Router();
 // controller
 import { userController } from "../controllers/controllers.js";
 
-router.post("/register", asyncHandler(userController.userRegistration));
-router.post("/login", asyncHandler(userController.userLogin));
+router.post("/login", asyncHandler(userController.loginEmployee));
+router.get("/getEmployees/", asyncHandler(userController.getEmployee));
+router.post("/addEmployee", asyncHandler(userController.addEmployee));
+router.put("/updateEmployee/:id", asyncHandler(userController.updateEmployee));
+router.delete(
+  "/deleteEmployee/:id",
+  asyncHandler(userController.deleteEmployee),
+);
 
 export default router;

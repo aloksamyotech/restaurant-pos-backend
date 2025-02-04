@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const userSchema = new Schema(
+const employeeSchema = new Schema(
   {
     firstName: {
       type: String,
@@ -11,7 +11,7 @@ const userSchema = new Schema(
     },
     lastName: {
       type: String,
-      
+
       trim: true,
     },
     phoneNumber: {
@@ -21,13 +21,13 @@ const userSchema = new Schema(
     role: {
       type: String,
 
-      enum: ["Manager","Order Taker"],
+      enum: ["superAdmin", "Manager", "OrderTaker"],
       trim: true,
     },
     gender: {
       type: String,
       required: true,
-      enum: ["Male", "Female"],
+      enum: ["Male", "Female", "Other"],
       trim: true,
     },
 
@@ -42,8 +42,9 @@ const userSchema = new Schema(
     },
     address: {
       type: String,
-      required: true,
-      
+    },
+    permissions: {
+      type: [],
     },
     refreshToken: {
       type: String,
@@ -56,7 +57,7 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-userSchema.pre("save", async function (next) {
+employeeSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 10);
@@ -64,14 +65,15 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (password) {
+employeeSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateAccessToken = function () {
+employeeSchema.methods.generateAccessToken = function () {
   const payload = {
     _id: this._id,
     email: this.email,
+    permissions: this.permissions,
   };
 
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
@@ -79,7 +81,7 @@ userSchema.methods.generateAccessToken = function () {
   });
 };
 
-userSchema.methods.generateRefreshToken = function () {
+employeeSchema.methods.generateRefreshToken = function () {
   const payload = {
     _id: this._id,
   };
@@ -89,4 +91,4 @@ userSchema.methods.generateRefreshToken = function () {
   });
 };
 
-export const User = mongoose.model("User", userSchema);
+export const Employee = mongoose.model("Employee", employeeSchema);

@@ -1,13 +1,22 @@
-import { User } from "../models/user.js";
+import { Employee } from "../models/user.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 
 export const addEmployee = async (req) => {
-  const { firstName,lastName, role, email, password,gender,address,phoneNumber } = req.body;
+  const {
+    firstName,
+    lastName,
+    role,
+    email,
+    password,
+    gender,
+    address,
+    phoneNumber,
+  } = req.body;
 
   // TODO: Validation
 
-  const isEmployeeAlreadyExist = await User.findOne({ email });
+  const isEmployeeAlreadyExist = await Employee.findOne({ email });
 
   if (isEmployeeAlreadyExist) {
     throw new CustomError(
@@ -17,11 +26,18 @@ export const addEmployee = async (req) => {
     );
   }
 
-  const employee = await User.create({
-    firstName,lastName, role, email, password,gender,address,phoneNumber
+  const employee = await Employee.create({
+    firstName,
+    lastName,
+    role,
+    email,
+    password,
+    gender,
+    address,
+    phoneNumber,
   });
 
-  const createdEmployee = await User.findById(employee._id).select(
+  const createdEmployee = await Employee.findById(employee._id).select(
     "-password -refreshToken",
   );
 
@@ -38,7 +54,7 @@ export const addEmployee = async (req) => {
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
-    const user = await User.findById(userId);
+    const user = await Employee.findById(userId);
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
@@ -54,12 +70,12 @@ const generateAccessAndRefreshTokens = async (userId) => {
   }
 };
 
-export const loginUser = async (req) => {
+export const loginEmployee = async (req) => {
   const { email, password } = req.body;
 
   // TODO: Validation
 
-  const user = await User.findOne({ email });
+  const user = await Employee.findOne({ email });
   if (!user) {
     throw new CustomError(
       statusCodes?.notFound,
@@ -82,7 +98,7 @@ export const loginUser = async (req) => {
     user._id,
   );
 
-  const loginUser = await User.findById(user._id).select(
+  const loginEmployee = await Employee.findById(user._id).select(
     "-password -refreshToken",
   );
 
@@ -95,6 +111,47 @@ export const loginUser = async (req) => {
     accessToken,
     refreshToken,
     options,
-    loginUser,
+    loginEmployee,
   };
+};
+
+export const deleteEmployee = async (req) => {
+  const { id } = req.params;
+
+  const employee = await Employee.findById(id);
+  if (!employee) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notFound,
+      errorCodes?.not_found,
+    );
+  }
+
+  await Employee.findByIdAndDelete(id);
+
+  return {
+    message: Message?.deletedSuccessfully,
+    employeeId: id,
+  };
+};
+
+export const getEmployee = async () => {
+  const employee = await Employee.find().sort({ createdAt: -1 });
+  return employee;
+};
+
+export const updateEmployee = async (id, updatedData) => {
+  const employee = await Employee.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
+
+  if (!employee) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Employee not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return employee;
 };
