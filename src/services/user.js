@@ -139,6 +139,27 @@ export const getEmployee = async () => {
   const employee = await Employee.find().sort({ createdAt: -1 });
   return employee;
 };
+export const getEmployeebyId = async (req) => {
+  const { id } = req?.params;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.idRequired,
+      errorCodes?.id_required,
+    );
+  }
+  const employee = await Employee.findOne({ _id: id });
+
+  if (!employee) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Employee not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return employee;
+};
 
 export const updateEmployee = async (id, updatedData) => {
   const employee = await Employee.findByIdAndUpdate(id, updatedData, {
@@ -154,4 +175,30 @@ export const updateEmployee = async (id, updatedData) => {
   }
 
   return employee;
+};
+
+export const updateEmployeePermission = async (req) => {
+  const { id } = req.params;
+
+  const { permissions } = req.body;
+  if (!id || !permissions) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.inValid,
+      errorCodes?.bad_request,
+    );
+  }
+  const updatedUser = await Employee.findOneAndUpdate(
+    { _id: id },
+    { permissions: permissions },
+    { new: true },
+  );
+  if (!updatedUser) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notUpdate,
+      errorCodes?.action_failed,
+    );
+  }
+  return updatedUser;
 };

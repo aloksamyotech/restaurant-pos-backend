@@ -21,12 +21,18 @@ const connectDB = async () => {
             password: "admin123",
             role: "superAdmin",
             permissions: [
+              "Dashboard",
               "POS",
-              "Portal",
-              "Food",
+              "Order",
+              "Categories",
+              "Items",
+              "Modifiers",
+              "Ingredients",
+              "Expense Type",
               "Expenses",
-              "Report",
-              "People",
+              "Overall Report",
+              "Employees",
+              "Customers",
             ],
           });
           await userData.save();

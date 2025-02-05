@@ -2,6 +2,7 @@ import * as userService from "../services/user.js";
 import { Message, statusCodes } from "../core/common/constant.js";
 import { asyncHandler } from "../utils/asyncWrapper.js";
 import CustomError from "../utils/exception.js";
+import { log } from "console";
 
 const addEmployee = async (req, res, next) => {
   const userData = await userService.addEmployee(req, res, next);
@@ -29,6 +30,10 @@ const getEmployee = async (req, res, next) => {
   const employee = await userService.getEmployee(req, res, next);
   res.status(statusCodes?.ok).send(employee);
 };
+const fetchEmployee = async (req, res, next) => {
+  const employee = await userService?.getEmployeebyId(req, res, next);
+  res.status(statusCodes?.ok).send(employee);
+};
 
 const updateEmployee = async (req, res, next) => {
   const { id } = req.params;
@@ -39,10 +44,22 @@ const updateEmployee = async (req, res, next) => {
   res.status(statusCodes?.ok).send(updatedEmployee);
 };
 
+const updateEmployeePermission = async (req, res, next) => {
+  const updatedEmployeePermission = await userService.updateEmployeePermission(
+    req,
+    res,
+    next,
+  );
+
+  res.status(statusCodes?.ok).send(updatedEmployeePermission);
+};
+
 export default {
   addEmployee,
   loginEmployee,
   updateEmployee,
   getEmployee,
+  fetchEmployee,
   deleteEmployee,
+  updateEmployeePermission,
 };
