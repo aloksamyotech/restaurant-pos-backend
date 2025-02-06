@@ -1,5 +1,6 @@
 import * as expenseService from "../services/expense.js";
 import { statusCodes } from "../core/common/constant.js";
+import { log } from "console";
 
 const addExpense = async (req, res, next) => {
   const expenseData = await expenseService.addExpense(req, res, next);
@@ -18,7 +19,8 @@ const getExpenses = async (req, res, next) => {
 
 const updateExpense = async (req, res, next) => {
   const { id } = req.params;
-  const updatedData = req.body;
+  const { name, desc, amount, expenseCategoryId } = req.body;
+  const updatedData = { name, desc, amount, expenseNameId: expenseCategoryId };
 
   const updatedExpense = await expenseService.updateExpense(id, updatedData);
   res.status(statusCodes?.ok).send(updatedExpense);
