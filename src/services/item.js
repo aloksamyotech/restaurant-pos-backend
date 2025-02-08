@@ -1,6 +1,7 @@
 import { Item } from "../models/item.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
+import { log } from "console";
 
 export const addItem = async (req) => {
   const {
@@ -16,6 +17,7 @@ export const addItem = async (req) => {
     price,
     categoryId,
   } = req?.body;
+
   const ingredients = JSON.parse(req.body.ingredients);
 
   const isItemAlreadyExist = await Item.findOne({ name });

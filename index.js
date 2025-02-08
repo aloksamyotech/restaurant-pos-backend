@@ -50,7 +50,7 @@ connectDB()
 
 app.use(responseInterceptor);
 
-app.use('/api/v1/user', userRouter)
+app.use('/api/v1/employee', userRouter)
 app.use('/api/v1/ingredient', ingredientRouter)
 app.use('/api/v1/category', categoryRouter)
 app.use('/api/v1/item', itemRouter)
