@@ -21,7 +21,11 @@ const getItem = async (req, res, next) => {
 const updateItem = async (req, res, next) => {
   const { id } = req.params;
   const updatedData = req.body;
-  updatedData.itemImage = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (req?.file) {
+    updatedData.itemImage = `/uploads/${req.file.filename}`;
+  }
+
   const updatedItem = await itemService.updateItem(id, updatedData);
 
   res.status(statusCodes?.ok).send(updatedItem);
