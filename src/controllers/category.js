@@ -31,9 +31,15 @@ const updateCategory = async (req, res, next) => {
   res.status(statusCodes?.ok).send(updatedCategory);
 };
 
+const bulkUploadCategory = async (req, res, next) => {
+  const categoryData = await categoryService.bulkUploadCategory(req, res, next);
+  res.status(statusCodes?.created).send(categoryData);
+};
+
 export default {
   addCategory,
   deleteCategory,
   getCategory,
   updateCategory,
+  bulkUploadCategory,
 };

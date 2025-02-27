@@ -1,6 +1,7 @@
 import { Category } from "../models/category.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
+import XLSX from "xlsx";
 
 export const addCategory = async (req) => {
   const { categoryName, desc, isAvailable = true } = req.body;
@@ -83,4 +84,40 @@ export const updateCategory = async (id, updatedData) => {
   }
 
   return category;
+};
+
+export const bulkUploadCategory = async (req) => {
+  const file = req?.file?.path;
+  const workbook = XLSX.readFile(file);
+  const sheetName = workbook.SheetNames[0];
+  const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const categories = data.map((row) => ({
+    ...row,
+  }));
+  const keysToCheck = ["categoryName"];
+  const checkAllKeys = categories.every((obj) =>
+    keysToCheck.every((key) => key in obj),
+  );
+  if (!checkAllKeys) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.inValidData,
+      errorCodes?.invalid_format,
+    );
+  }
+  categories.map(async (category) => {
+    try {
+      const newCategory = await Category.create(category);
+      if (!newCategory) {
+        throw new CustomError(
+          statusCodes?.badRequest,
+          Message?.notCreated,
+          errorCodes?.not_created,
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  return;
 };
