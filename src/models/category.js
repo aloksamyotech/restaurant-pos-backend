@@ -19,6 +19,10 @@ const categorySchema = new Schema(
     categoryImage: {
       type: String,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

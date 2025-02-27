@@ -49,7 +49,7 @@ export const addOrder = async (req) => {
 };
 
 export const getOrder = async () => {
-  const order = await Order.find().populate();
+  const order = await Order?.find().populate().sort({ createdAt: -1 });
 
   return order;
 };

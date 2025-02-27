@@ -23,5 +23,10 @@ router.put(
   upload.single("categoryImage"),
   asyncHandler(categoryController.updateCategory),
 );
+router.post(
+  "/bulkUploadCategory",
+  upload.single("file"),
+  asyncHandler(categoryController.bulkUploadCategory),
+);
 
 export default router;
