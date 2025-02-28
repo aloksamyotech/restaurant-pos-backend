@@ -105,19 +105,26 @@ export const bulkUploadCategory = async (req) => {
       errorCodes?.invalid_format,
     );
   }
-  categories.map(async (category) => {
+  for (const category of categories) {
     try {
-      const newCategory = await Category.create(category);
-      if (!newCategory) {
-        throw new CustomError(
-          statusCodes?.badRequest,
-          Message?.notCreated,
-          errorCodes?.not_created,
-        );
+      const isCategoryAlreadyExist = await Category.findOne({
+        categoryName: category.categoryName,
+        isDeleted: false,
+      });
+      if (!isCategoryAlreadyExist) {
+        const newCategory = await Category.create(category);
+        if (!newCategory) {
+          throw new CustomError(
+            statusCodes?.badRequest,
+            Message?.notCreated,
+            errorCodes?.not_created,
+          );
+        }
       }
     } catch (error) {
       console.log(error);
     }
-  });
-  return;
+  }
+
+  return categories;
 };
