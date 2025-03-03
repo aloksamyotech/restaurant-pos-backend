@@ -8,7 +8,6 @@ export const addItem = async (req) => {
     name,
     desc,
     available,
-
     discount,
     comment,
     rating,
