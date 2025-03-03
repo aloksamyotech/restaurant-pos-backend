@@ -1,5 +1,5 @@
-import { errorCodes, Message, statusCodes } from "../core/common/constant";
-import { Table } from "../models/table";
+import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
+import { Table } from "../models/table.js";
 
 export const addTable = async (req) => {
   const { tableNumber, space } = req?.body;
@@ -28,14 +28,14 @@ export const addTable = async (req) => {
   return createdItem;
 };
 
-export const updateItem = async (id, updatedData) => {
-  const item = await Item.findByIdAndUpdate(id, updatedData, { new: true });
-  if (!item) {
-    throw new CustomError(
-      statusCodes?.notFound,
-      "Item not found",
-      errorCodes?.not_found,
-    );
-  }
-  return item;
-};
+// export const updateItem = async (id, updatedData) => {
+//   const item = await Item.findByIdAndUpdate(id, updatedData, { new: true });
+//   if (!item) {
+//     throw new CustomError(
+//       statusCodes?.notFound,
+//       "Item not found",
+//       errorCodes?.not_found,
+//     );
+//   }
+//   return item;
+// };
