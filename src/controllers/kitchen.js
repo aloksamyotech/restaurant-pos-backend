@@ -1,0 +1,11 @@
+import { statusCodes } from "../core/common/constant.js";
+import * as kitchenService from "../services/kitchen.js";
+
+const addKitchenOrder = async (req, res) => {
+    const kitchenOrderData = await kitchenService.addKitchenOrder(req);
+    res.status(statusCodes?.created).send(kitchenOrderData);
+};
+
+export default {
+    addKitchenOrder
+};

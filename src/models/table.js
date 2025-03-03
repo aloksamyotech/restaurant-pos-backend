@@ -11,6 +11,7 @@ const tableSchema = new Schema(
     status: {
       type: String,
       default: "pending",
+      slug:['vacant',"occupied"]
     },
     space: {
       type: Number,

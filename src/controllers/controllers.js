@@ -11,6 +11,7 @@ import invoiceController from "./invoice.js";
 import customerController from "./customer.js";
 import paymentController from "./payment.js";
 import tableController from './table.js'
+import kitchenController from './kitchen.js'
 
 export {
   userController,
@@ -24,5 +25,6 @@ export {
   invoiceController,
   customerController,
   paymentController,
-  tableController
+  tableController,
+  kitchenController
 };
