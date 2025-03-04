@@ -21,6 +21,9 @@ const kitchenSchema = new Schema(
     note: {
       type: String,
     },
+    table:{
+      type:String,
+    }
   },
   { timestamps: true },
 );

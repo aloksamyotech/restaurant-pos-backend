@@ -17,6 +17,7 @@ export const addOrder = async (req) => {
     type,
     paymentMode,
     phone,
+    table
   } = req?.body;
 
   const order = await Order.create({
@@ -33,6 +34,7 @@ export const addOrder = async (req) => {
     type,
     paymentMode,
     phone,
+    table
   });
 
   const createdOrder = await Order.findById(order._id);
