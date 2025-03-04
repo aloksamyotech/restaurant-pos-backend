@@ -8,7 +8,7 @@ export const addKitchenOrder = async (req) => {
         status: 'pending',
     });
     const createdKitchenOrder = await Kitchen.findById(kitchenOrder._id).lean();
-    if (!createdItem) {
+    if (!createdKitchenOrder) {
         return new CustomError(
             statusCodes?.serviceUnavailable,
             Message?.serverError,
@@ -16,6 +16,24 @@ export const addKitchenOrder = async (req) => {
         );
     }
     return createdKitchenOrder;
+};
+
+export const updateKitchenOrder = async (req) => {
+    const kitchenOrderId = req?.params?.id
+    const { ...udpatedValues } = req?.body;
+    const isKitchenOrder = await Kitchen.findById(kitchenOrderId).lean();
+    if (!isKitchenOrder) {
+        return new CustomError(
+            statusCodes?.serviceUnavailable,
+            Message?.serverError,
+            errorCodes?.service_unavailable,
+        );
+    }
+    const updatedData = await Kitchen.findOneAndUpdate({
+        _id: kitchenOrderId
+    }, udpatedValues);
+
+    return updatedData;
 };
 
 

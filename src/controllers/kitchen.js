@@ -6,6 +6,12 @@ const addKitchenOrder = async (req, res) => {
     res.status(statusCodes?.created).send(kitchenOrderData);
 };
 
+const updateKitchenOrderById = async (req, res) => {
+    const kitchenOrderData = await kitchenService.updateKitchenOrder(req);
+    res.status(statusCodes?.created).send(kitchenOrderData);
+};
+
 export default {
-    addKitchenOrder
+    addKitchenOrder,
+    updateKitchenOrderById
 };
