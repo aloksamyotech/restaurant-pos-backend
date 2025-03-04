@@ -8,11 +8,11 @@ const tableSchema = new Schema(
       trim: true,
       unique: true,
     },
-    status: {
-      type: String,
-      default: "pending",
-      slug:['vacant',"occupied"]
-    },
+      status: {
+        type: String,
+        default: "pending",
+        slug:['vacant',"occupied"]
+      },
     space: {
       type: Number,
     },
