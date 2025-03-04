@@ -10,8 +10,18 @@ const updateTable = async (req, res) => {
   const tableData = await tableService.updateTable(req);
   res.status(statusCodes?.created).send(tableData);
 };
+const getTable = async (req, res, next) => {
+  const tableData = await tableService.getTable(req, res, next);
+  res.status(statusCodes?.ok).send(tableData);
+};
+const deleteTable = async (req, res, next) => {
+  const tableData = await tableService.deleteTable(req, res, next);
+  res.status(statusCodes?.ok).send(tableData);
+};
 
 export default {
   addTable,
   updateTable,
+  getTable,
+  deleteTable
 };

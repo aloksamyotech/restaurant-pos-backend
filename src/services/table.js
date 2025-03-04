@@ -2,7 +2,7 @@ import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import { Table } from "../models/table.js";
 
 export const addTable = async (req) => {
-  const { tableNumber, space } = req?.body;
+  const { tableNumber, space,status } = req?.body;
   const isTableAlreadyExist = await Table.findOne({ tableNumber }).lean();
   if (isTableAlreadyExist) {
     throw new CustomError(
@@ -14,7 +14,9 @@ export const addTable = async (req) => {
 
   const table = await Table.create({
     tableNumber,
+    status,
     space,
+    
   });
 
   const createdItem = await Table.findById(table._id).lean();
@@ -27,15 +29,40 @@ export const addTable = async (req) => {
   }
   return createdItem;
 };
+export const getTable = async () => {
+  const table = await Table.find().sort({ createdAt: -1 });
+  return table;
+};
+export const deleteTable = async (req) => {
+  const { id } = req.params;
 
-// export const updateItem = async (id, updatedData) => {
-//   const item = await Item.findByIdAndUpdate(id, updatedData, { new: true });
-//   if (!item) {
-//     throw new CustomError(
-//       statusCodes?.notFound,
-//       "Item not found",
-//       errorCodes?.not_found,
-//     );
-//   }
-//   return item;
-// };
+  const table = await Table.findByIdAndDelete(id);
+  if (!table) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notFound,
+      errorCodes?.not_found,
+    );
+  }
+
+  return {
+    message: Message?.deletedSuccessfully,
+    modifierId: id,
+  };
+};
+
+export const updateTable = async (id, updatedData) => {
+  const table = await Table.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
+
+  if (!table) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Table not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return table;
+};

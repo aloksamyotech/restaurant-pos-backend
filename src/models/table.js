@@ -10,8 +10,7 @@ const tableSchema = new Schema(
     },
     status: {
       type: String,
-      default: "pending",
-      slug:['vacant',"occupied"]
+      enum:["Vacant","Occupied"]
     },
     space: {
       type: Number,
