@@ -39,7 +39,13 @@ const orderSchema = new Schema(
     phone: {
       type: Number,
     },
-    type: {},
+    type: {
+      type: String,
+      enum:["Dining","Pickup"]
+    },
+    table: {
+      type: String
+    }
   },
   { timestamps: true },
 );

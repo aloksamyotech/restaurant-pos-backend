@@ -5,18 +5,19 @@ import globalExceptionHandler from './src/utils/globalException.js';
 import logger from './src/core/config/logger.js';
 import "dotenv/config"
 import responseInterceptor from './src/utils/responseInterceptor.js';
-
 import { userRouter } from './src/routes/routes.js';
 import { ingredientRouter } from './src/routes/routes.js';
 import { categoryRouter } from './src/routes/routes.js';
 import { itemRouter } from './src/routes/routes.js';
-import {modifierRouter } from './src/routes/routes.js';
-import {expenseTypeRouter } from './src/routes/routes.js';
-import {expenseRouter } from './src/routes/routes.js';
-import {orderRouter } from './src/routes/routes.js';
-import {invoiceRouter } from './src/routes/routes.js';
-import {customerRouter } from './src/routes/routes.js';
-import {paymentRouter } from './src/routes/routes.js';
+import { modifierRouter } from './src/routes/routes.js';
+import { expenseTypeRouter } from './src/routes/routes.js';
+import { expenseRouter } from './src/routes/routes.js';
+import { orderRouter } from './src/routes/routes.js';
+import { invoiceRouter } from './src/routes/routes.js';
+import { customerRouter } from './src/routes/routes.js';
+import { paymentRouter } from './src/routes/routes.js';
+import { tableRouter } from './src/routes/routes.js'
+import { kitchenRouter } from './src/routes/routes.js';
 import path from 'path';
 
 const app = express();
@@ -27,11 +28,7 @@ const PORT = (() => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
-
-
 app.use(corsConfig);
-
 app.use((req, res, next) => {
     logger.info(`Incoming request: ${req.method} ${req.originalUrl}`);
     next();
@@ -42,14 +39,13 @@ connectDB()
         logger.info('Database connected successfully');
     })
     .catch((err) => {
-        logger.error(`Database connection failed: ${err.message}`); 
+        logger.error(`Database connection failed: ${err.message}`);
     });
 
 
 // user Route
 
 app.use(responseInterceptor);
-
 app.use('/api/v1/employee', userRouter)
 app.use('/api/v1/ingredient', ingredientRouter)
 app.use('/api/v1/category', categoryRouter)
@@ -61,6 +57,8 @@ app.use('/api/v1/order', orderRouter)
 app.use('/api/v1/invoice', invoiceRouter)
 app.use('/api/v1/customer', customerRouter)
 app.use('/api/v1/payment', paymentRouter)
+app.use('/api/v1/table', tableRouter)
+app.use('/api/v1/kitchen', kitchenRouter)
 
 app.use(globalExceptionHandler);
 

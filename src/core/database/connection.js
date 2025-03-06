@@ -34,6 +34,8 @@ const connectDB = async () => {
               "Employees",
               "Customers",
               "Expense Report",
+              "Kitchen",
+              "Table"
             ],
           });
           await userData.save();
