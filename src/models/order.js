@@ -40,7 +40,8 @@ const orderSchema = new Schema(
       type: Number,
     },
     type: {
-      type: String
+      type: String,
+      enum:["Dining","Pickup"]
     },
     table: {
       type: String

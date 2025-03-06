@@ -5,7 +5,7 @@ const kitchenSchema = new Schema(
     order: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
-      required : true
+      required: true
     },
     chef: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,13 +16,17 @@ const kitchenSchema = new Schema(
     },
     completedPercentage: {
       type: Number,
-      default:0
+      default: 0
+    },
+    itemCompeted: {
+      type: [],
+      default: []
     },
     note: {
       type: String,
     },
-    table:{
-      type:String,
+    table: {
+      type: String,
     }
   },
   { timestamps: true },

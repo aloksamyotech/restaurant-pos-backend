@@ -4,10 +4,12 @@ import { Kitchen } from "../models/kitchen.js";
 import CustomError from "../utils/exception.js";
 
 export const addKitchenOrder = async (req) => {
-    const { order, status } = req?.body;
+    let { order, table } = req?.body;
+    order = new mongoose.Types.ObjectId(order);
     const kitchenOrder = await Kitchen.create({
         order: order,
         status: 'pending',
+        table
     });
     const createdKitchenOrder = await Kitchen.findById(kitchenOrder._id).lean();
     if (!createdKitchenOrder) {
@@ -22,7 +24,7 @@ export const addKitchenOrder = async (req) => {
 
 export const updateKitchenOrder = async (req) => {
     const kitchenOrderId = req?.params?.id
-    const { ...udpatedValues } = req?.body;
+    const { ...updatedValues } = req?.body;
     const isKitchenOrder = await Kitchen.findById(kitchenOrderId).lean();
     if (!isKitchenOrder) {
         return new CustomError(
@@ -32,15 +34,18 @@ export const updateKitchenOrder = async (req) => {
         );
     }
     const updatedData = await Kitchen.findOneAndUpdate({
-        _id: kitchenOrderId
-    }, udpatedValues);
+        _id: kitchenOrderId,
+
+    },
+        updatedValues
+    );
 
     return updatedData;
 };
 
 export const findKitchenOrderById = async (req) => {
     let kitchenOrderId = req?.params?.id
-    console.log("kitchenOrderId=====>>>>>>>",kitchenOrderId)
+  
     kitchenOrderId = new mongoose.Types.ObjectId(kitchenOrderId)
     const isKitchenOrder = await Kitchen.findById(kitchenOrderId).lean();
     if (!isKitchenOrder) {
@@ -57,7 +62,7 @@ export const findKitchenOrderById = async (req) => {
 
 
 export const findAllKitchenOrder = async (req) => {
-    const isKitchenOrder = await Kitchen.find().lean();
+    const isKitchenOrder = await Kitchen.find().populate("order", "type");
     if (!isKitchenOrder) {
         return new CustomError(
             statusCodes?.serviceUnavailable,

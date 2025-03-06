@@ -21,7 +21,7 @@ const employeeSchema = new Schema(
     role: {
       type: String,
 
-      enum: ["superAdmin", "Manager", "OrderTaker"],
+      enum: ["superAdmin", "Manager", "OrderTaker", "Chef"],
       trim: true,
     },
     gender: {
