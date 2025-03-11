@@ -51,7 +51,10 @@ export const deleteTable = async (req) => {
   };
 };
 
-export const updateTable = async (id, updatedData) => {
+export const updateTable = async (req) => {
+  const id=req.params.id;
+  const updatedData=req.body;
+
   const table = await Table.findByIdAndUpdate(id, updatedData, {
     new: true,
   });

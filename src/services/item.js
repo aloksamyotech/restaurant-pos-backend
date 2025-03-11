@@ -85,6 +85,28 @@ export const getItem = async () => {
   return item;
 };
 
+export const getItemById = async (req) => {
+  const { id } = req?.params;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.idRequired,
+      errorCodes?.id_required,
+    );
+  }
+  const item = await Item.findOne({ _id: id });
+
+  if (!item) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Item not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return item;
+};
+
 export const updateItem = async (id, updatedData) => {
   const item = await Item.findByIdAndUpdate(id, updatedData, { new: true });
 

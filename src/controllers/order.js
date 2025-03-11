@@ -29,7 +29,6 @@ const getOrderByCustomerId = async (req, res, next) => {
 const updateOrder = async (req, res, next) => {
   const { id } = req?.params;
   const updatedData = req?.body;
-
   const updatedOrder = await orderService?.updateOrder(id, updatedData);
 
   res.status(statusCodes?.ok).send(updatedOrder);

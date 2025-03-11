@@ -1,6 +1,7 @@
 import { Order } from "../models/order.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
+import { Item } from "../models/item.js";
 
 export const addOrder = async (req) => {
   const {
@@ -96,5 +97,30 @@ export const getOrderByCustomerId = async (req) => {
     );
   }
 
+  return order;
+};
+
+export const updateOrder = async (id, updatedData) => {
+  const itemdata = await Item.findById(updatedData.items);
+  if (!itemdata) {
+    throw new CustomError(statusCodes?.notFound, "Item not found", errorCodes?.not_found);
+  }
+const newItem = {
+    id: itemdata._id,
+    name: itemdata.name,
+    price: itemdata.price,
+    quantity: updatedData.quantity,
+    cost: itemdata.cost
+  };
+
+
+  const order = await Order.findById(id);
+  if (!order) {
+    throw new CustomError(statusCodes?.notFound, "Order not found", errorCodes?.not_found);
+  }
+order.items.push(newItem);
+order.totalPrice = order.totalPrice + (newItem.price * newItem.quantity);
+  
+  await order.save();
   return order;
 };
