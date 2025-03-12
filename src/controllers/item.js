@@ -17,6 +17,10 @@ const getItem = async (req, res, next) => {
   const item = await itemService.getItem(req, res, next);
   res.status(statusCodes?.ok).send(item);
 };
+const fetchItem = async (req, res, next) => {
+  const item = await itemService?.getItemById(req, res, next);
+  res.status(statusCodes?.ok).send(item);
+};
 
 const updateItem = async (req, res, next) => {
   const { id } = req.params;
@@ -36,4 +40,5 @@ export default {
   deleteItem,
   getItem,
   updateItem,
+  fetchItem
 };

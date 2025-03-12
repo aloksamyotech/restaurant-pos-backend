@@ -10,7 +10,8 @@ const tableSchema = new Schema(
     },
     status: {
       type: String,
-      enum:["Vacant","Occupied"]
+      enum:["Vacant","Occupied"],
+      
     },
     space: {
       type: Number,

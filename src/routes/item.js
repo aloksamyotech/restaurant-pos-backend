@@ -14,6 +14,7 @@ router.post(
 
 router.delete("/deleteItem/:id", asyncHandler(itemController.deleteItem));
 router.get("/getItems/", asyncHandler(itemController.getItem));
+router.get("/fetchItem/:id", asyncHandler(itemController.fetchItem));
 router.put(
   "/updateItem/:id",
   upload.single("itemImage"),
