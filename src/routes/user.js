@@ -4,6 +4,8 @@ const router = Router();
 
 // controller
 import { userController } from "../controllers/controllers.js";
+import { jwtMiddleware } from "../middlewares/JwtAuth.js";
+import { upload } from "../middlewares/multerConfig.js";
 
 router.post("/login", asyncHandler(userController.loginEmployee));
 router.get("/getEmployees/", asyncHandler(userController.getEmployee));
@@ -14,6 +16,8 @@ router.put(
   "/updateEmployeePermissions/:id",
   asyncHandler(userController.updateEmployeePermission),
 );
+router.put("/updateLogo",upload.single("image"),jwtMiddleware, asyncHandler(userController.updateLogo));
+router.put("/updatePassword",jwtMiddleware, asyncHandler(userController.updatePassword));
 router.delete(
   "/deleteEmployee/:id",
   asyncHandler(userController.deleteEmployee),

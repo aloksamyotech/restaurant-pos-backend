@@ -8,6 +8,8 @@ router.post("/addOrder", asyncHandler(orderController.addOrder));
 
 router.delete("/deleteOrder/:id", asyncHandler(orderController.deleteOrder));
 router.get("/getOrders/", asyncHandler(orderController.getOrder));
+router.get("/getTotalQty/", asyncHandler(orderController.getTotalQty));
+router.get("/getTotalSales/", asyncHandler(orderController.getTotalSales));
 router.get("/fetchOrder/:id", asyncHandler(orderController.fetchOrder));
 router.get(
   "/getorderbycustomerid/:id",

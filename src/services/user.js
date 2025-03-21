@@ -1,6 +1,11 @@
 import { Employee } from "../models/user.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
+import getAccountCreationEmailTemplate from "../core/Template/accountCreationTemplate.js";
+import BlockedRole from "../models/email.js";
+import { sendEmail } from "../core/common/nodeMailer.js";
+
+
 
 export const addEmployee = async (req) => {
   const {
@@ -12,9 +17,21 @@ export const addEmployee = async (req) => {
     gender,
     address,
     phoneNumber,
+    currency
   } = req.body;
 
   // TODO: Validation
+  const isBlocked = await BlockedRole.findOne({ role: "Create User" });
+  if (isBlocked?.isBlocked) {
+    await sendEmail(
+      email,
+      "Welcome to Our Company",
+      "",
+      getAccountCreationEmailTemplate(firstName),
+    );
+  } else {
+    console.log("Email not sent as 'client' role is blocked.");
+  }
 
   const isEmployeeAlreadyExist = await Employee.findOne({ email });
 
@@ -35,6 +52,7 @@ export const addEmployee = async (req) => {
     gender,
     address,
     phoneNumber,
+    currency
   });
 
   const createdEmployee = await Employee.findById(employee._id).select(
@@ -176,6 +194,52 @@ export const updateEmployee = async (id, updatedData) => {
 
   return employee;
 };
+
+export const updatelogo = async (req) => {
+  const id = req.user._id;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.inValid,
+      errorCodes?.bad_request,
+    );
+  }
+  const updateData = {
+    companyLogo: req.file ? `/uploads/${req.file.filename}` : null,
+  };
+  const updatedLogo = await Employee.findOneAndUpdate(
+    { _id: id },
+    updateData,
+    { new: true },
+  );
+  if (!updatedLogo) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notUpdate,
+      errorCodes?.action_failed,
+    );
+  }
+  return updatedLogo;
+};
+
+export const updatePassword = async (req) => {
+  const { newPassword } = req.body;
+  const id = req.user._id;
+  const user = await Employee.findOne({
+    _id: id,
+  });
+  if (!user) {
+    throw new CustomError(
+      statusCodes?.unauthorized,
+      "Invalid or expired reset token.",
+      errorCodes?.invalid_token,
+    );
+  }
+  user.password = newPassword;
+  await user.save();
+  return user;
+};
+
 
 export const updateEmployeePermission = async (req) => {
   const { id } = req.params;

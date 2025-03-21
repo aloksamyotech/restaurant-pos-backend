@@ -18,6 +18,7 @@ import { customerRouter } from './src/routes/routes.js';
 import { paymentRouter } from './src/routes/routes.js';
 import { tableRouter } from './src/routes/routes.js'
 import { kitchenRouter } from './src/routes/routes.js';
+import { emailRouter } from './src/routes/routes.js';
 import path from 'path';
 
 const app = express();
@@ -59,7 +60,7 @@ app.use('/api/v1/customer', customerRouter)
 app.use('/api/v1/payment', paymentRouter)
 app.use('/api/v1/table', tableRouter)
 app.use('/api/v1/kitchen', kitchenRouter)
-
+app.use('/api/v1/email', emailRouter)
 app.use(globalExceptionHandler);
 
 app.listen(PORT, () => {

@@ -42,6 +42,7 @@ export const Message = {
   loginError: "Login Error",
   notUpdate: "Update Failed",
   serverError: "Intrnal Server Error",
+  ItemNotFound: "Item not found",
 };
 
 export const errorCodes = Object.freeze({

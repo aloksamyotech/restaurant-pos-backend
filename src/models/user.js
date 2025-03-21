@@ -43,6 +43,12 @@ const employeeSchema = new Schema(
     address: {
       type: String,
     },
+    currency: {
+      type: String,
+    },
+    companyLogo: {
+      type: String,
+    },
     permissions: {
       type: [],
     },
