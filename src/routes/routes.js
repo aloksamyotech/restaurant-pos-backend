@@ -9,8 +9,9 @@ import orderRouter from "./order.js";
 import invoiceRouter from "./invoice.js";
 import customerRouter from "./customer.js";
 import paymentRouter from "./payment.js";
-import tableRouter from './table.js'
-import kitchenRouter from './kitchen.js'
+import tableRouter from './table.js';
+import kitchenRouter from './kitchen.js';
+import emailRouter from './email.js'
 
 export {
   userRouter,
@@ -25,5 +26,7 @@ export {
   customerRouter,
   paymentRouter,
   tableRouter,
-  kitchenRouter
+  kitchenRouter,
+  emailRouter
+
 };

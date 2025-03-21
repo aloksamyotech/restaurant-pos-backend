@@ -43,6 +43,14 @@ const updateEmployee = async (req, res, next) => {
 
   res.status(statusCodes?.ok).send(updatedEmployee);
 };
+const updateLogo = async (req, res, next) => {
+  const updatedLogo = await userService.updatelogo(req, res, next);
+  res.status(statusCodes?.ok).send(updatedLogo);
+};
+const updatePassword = async (req, res, next) => {
+  const updatedPassword = await userService.updatePassword(req, res, next);
+  res.status(statusCodes?.ok).send(updatedPassword);
+};
 
 const updateEmployeePermission = async (req, res, next) => {
   const updatedEmployeePermission = await userService.updateEmployeePermission(
@@ -62,4 +70,7 @@ export default {
   fetchEmployee,
   deleteEmployee,
   updateEmployeePermission,
+  updateLogo,
+  updatePassword
+  
 };

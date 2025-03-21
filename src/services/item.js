@@ -99,7 +99,7 @@ export const getItemById = async (req) => {
   if (!item) {
     throw new CustomError(
       statusCodes?.notFound,
-      "Item not found",
+      Message?.ItemNotFound,
       errorCodes?.not_found,
     );
   }
