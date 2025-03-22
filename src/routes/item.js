@@ -20,5 +20,10 @@ router.put(
   upload.single("itemImage"),
   asyncHandler(itemController.updateItem),
 );
+router.post(
+  "/bulkUploadItem",
+  upload.single("file"),
+  asyncHandler(itemController.bulkUploadItem),
+);
 
 export default router;
