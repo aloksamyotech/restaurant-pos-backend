@@ -34,11 +34,16 @@ const updateItem = async (req, res, next) => {
 
   res.status(statusCodes?.ok).send(updatedItem);
 };
+const bulkUploadItem = async (req, res, next) => {
+  const itemData = await itemService.bulkUploadItem(req, res, next);
+  res.status(statusCodes?.created).send(itemData);
+};
 
 export default {
   addItem,
   deleteItem,
   getItem,
   updateItem,
-  fetchItem
+  fetchItem,
+  bulkUploadItem
 };

@@ -6,7 +6,8 @@ import { Employee } from "../../models/user.js";
 const connectDB = async () => {
   try {
     (async function () {
-      const dbUri = database_urls.connection + database_urls.db_name;
+      const dbUri = database_urls.connection;
+      
       const dbconnect = await mongoose.connect(dbUri, {});
       if (dbconnect) {
         const existingAdmin = await Employee.findOne({
