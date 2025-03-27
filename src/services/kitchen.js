@@ -30,7 +30,7 @@ export const updateKitchenOrder = async (req) => {
     const kitchenOrderId = req?.params?.id
     const { ...updatedValues } = req?.body;
 
-    const isKitchenOrder = await Kitchen.findById(kitchenOrderId);
+const isKitchenOrder = await Kitchen.findById(kitchenOrderId);
     if (!isKitchenOrder) {
         return new CustomError(
             statusCodes?.serviceUnavailable,
@@ -44,7 +44,7 @@ export const updateKitchenOrder = async (req) => {
     },
         updatedValues
     );
-    const chefId=updatedValues?.chef;
+    const chefId=updatedData?.chef;
     const chefData = await Employee.findById(chefId);
    
     if (!chefData) {
