@@ -5,7 +5,6 @@ import globalExceptionHandler from './src/utils/globalException.js';
 import logger from './src/core/config/logger.js';
 import "dotenv/config"
 import responseInterceptor from './src/utils/responseInterceptor.js';
-
 import { userRouter } from './src/routes/routes.js';
 import { ingredientRouter } from './src/routes/routes.js';
 import { categoryRouter } from './src/routes/routes.js';
