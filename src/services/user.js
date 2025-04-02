@@ -20,19 +20,6 @@ export const addEmployee = async (req) => {
     currency
   } = req.body;
 
-  // TODO: Validation
-  const isBlocked = await BlockedRole.findOne({ role: "Create User" });
-  if (isBlocked?.isBlocked) {
-    await sendEmail(
-      email,
-      "Welcome to Our Company",
-      "",
-      getAccountCreationEmailTemplate(firstName),
-    );
-  } else {
-    console.log("Email not sent as 'client' role is blocked.");
-  }
-
   const isEmployeeAlreadyExist = await Employee.findOne({ email });
 
   if (isEmployeeAlreadyExist) {
@@ -54,6 +41,18 @@ export const addEmployee = async (req) => {
     phoneNumber,
     currency
   });
+
+  const isBlocked = await BlockedRole.findOne({ role: "Create User" });
+  if (isBlocked?.isBlocked) {
+    await sendEmail(
+      email,
+      "Welcome to Our Company",
+      "",
+      getAccountCreationEmailTemplate(firstName),
+    );
+  } else {
+    console.log("Email not sent as 'client' role is blocked.");
+  }
 
   const createdEmployee = await Employee.findById(employee._id).select(
     "-password -refreshToken",
@@ -91,7 +90,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 export const loginEmployee = async (req) => {
   const { email, password } = req.body;
 
-  // TODO: Validation
+ 
 
   const user = await Employee.findOne({ email });
   if (!user) {

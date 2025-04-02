@@ -44,14 +44,11 @@ const isKitchenOrder = await Kitchen.findById(kitchenOrderId);
     },
         updatedValues
     );
-    const chefId=updatedData?.chef;
-    const chefData = await Employee.findById(chefId);
+  const chefId=updatedValues?.chef;
+ const chefData = await Employee.findById(chefId);
+  
    
-    if (!chefData) {
-        throw new CustomError(statusCodes?.notFound, "Chef Data not found", errorCodes?.not_found);
-    }
-    
-  const fetchChefData = {
+   const fetchChefData = {
       email: chefData?.email,
       name: chefData?.firstName,
       

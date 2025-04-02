@@ -155,10 +155,10 @@ export const bulkUploadItem = async (req) => {
 
       
       if (!category && categoryName) {
-        category = await Category.findOne({ categoryName: categoryName.toLowerCase() });
+        category = await Category.findOne({ categoryName: categoryName});
 
         if (!category) {
-          category = new Category({ categoryName: categoryName.toLowerCase() });
+          category = new Category({ categoryName: categoryName});
           await category.save();
         }
       }
