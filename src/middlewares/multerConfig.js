@@ -1,5 +1,7 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./uploads/");
@@ -9,6 +11,7 @@ const storage = multer.diskStorage({
     cb(null, `${file.fieldname}-${Date.now()}${ext}`);
   },
 });
+
 const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     "image/jpeg",
@@ -23,6 +26,12 @@ const fileFilter = (req, file, cb) => {
     cb(new Error("Only images and PDF files are allowed"), false);
   }
 };
+
+const uploadDir = "./uploads/";
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 export const upload = multer({
   storage,
   fileFilter,

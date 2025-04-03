@@ -152,6 +152,7 @@ export const getTotalQty = async (req) => {
     throw new Error(data_not_found);
   }
 };
+
 export const getOrderbyId = async (req) => {
   const { id } = req?.params;
   if (!id) {
