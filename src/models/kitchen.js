@@ -11,6 +11,10 @@ const kitchenSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Employee",
     },
+    customer:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+    },
     status: {
       type: String,
     },

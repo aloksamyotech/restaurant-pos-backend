@@ -73,7 +73,7 @@ export const findKitchenOrderById = async (req) => {
     let kitchenOrderId = req?.params?.id
 
     kitchenOrderId = new mongoose.Types.ObjectId(kitchenOrderId)
-    const isKitchenOrder = await Kitchen.findById(kitchenOrderId).populate("chef", "firstName").populate("order", "type");
+    const isKitchenOrder = await Kitchen.findById(kitchenOrderId).populate("chef", "firstName").populate("order", "typecustomerId");
     if (!isKitchenOrder) {
         return new CustomError(
             statusCodes?.serviceUnavailable,

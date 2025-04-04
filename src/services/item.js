@@ -1,7 +1,7 @@
 import { Item } from "../models/item.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
-import XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { Category } from "../models/category.js";
 
 export const addItem = async (req) => {
@@ -122,22 +122,34 @@ export const updateItem = async (id, updatedData) => {
   return item;
 };
 
+
 export const bulkUploadItem = async (req) => {
   const file = req?.file?.path;
-  const workbook = XLSX.readFile(file);
-  const sheetName = workbook.SheetNames[0];
-  const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(file);
+  const worksheet = workbook.worksheets[0];
+  
+  const data = [];
+  worksheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return; 
+    const rowData = {};
+    worksheet.getRow(1).eachCell((cell, colNumber) => {
+      rowData[cell.value] = row.getCell(colNumber).value;
+    });
+    data.push(rowData);
+  });
+
   const items = data.map((row) => ({ ...row }));
   const keysToCheck = ["name", "categoryName"];
   const checkAllKeys = items.every((obj) =>
-    keysToCheck.every((key) => key in obj),
+    keysToCheck.every((key) => key in obj)
   );
 
   if (!checkAllKeys) {
     throw new CustomError(
       statusCodes?.badRequest,
       Message?.inValidData,
-      errorCodes?.invalid_format,
+      errorCodes?.invalid_format
     );
   }
 
@@ -148,17 +160,14 @@ export const bulkUploadItem = async (req) => {
       const { name, desc, cost, price, categoryId, categoryName } = item;
       let category;
 
-    
       if (categoryId) {
         category = await Category.findById(categoryId);
       }
 
-      
       if (!category && categoryName) {
-        category = await Category.findOne({ categoryName: categoryName});
-
+        category = await Category.findOne({ categoryName: categoryName });
         if (!category) {
-          category = new Category({ categoryName: categoryName});
+          category = new Category({ categoryName: categoryName });
           await category.save();
         }
       }
@@ -167,15 +176,16 @@ export const bulkUploadItem = async (req) => {
         throw new CustomError(
           statusCodes?.badRequest,
           "Category not found or created",
-          errorCodes?.not_found,
+          errorCodes?.not_found
         );
       }
+
       const itemToSave = {
         name,
         desc,
         cost,
         price,
-        categoryId: category._id, 
+        categoryId: category._id,
       };
       const isItemAlreadyExist = await Item.findOne({
         name: item?.name,
@@ -188,7 +198,7 @@ export const bulkUploadItem = async (req) => {
           throw new CustomError(
             statusCodes?.badRequest,
             Message?.notCreated,
-            errorCodes?.not_created,
+            errorCodes?.not_created
           );
         }
         savedItems.push(newItem);
@@ -200,5 +210,3 @@ export const bulkUploadItem = async (req) => {
 
   return savedItems;
 };
-
-
