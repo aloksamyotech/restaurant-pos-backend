@@ -14,6 +14,7 @@ export const addInvoice = async (req) => {
     paymentMode,
     paymentStatus,
     customerName,
+    invoicePdfUrl
   } = req?.body;
 
   const invoice = await Invoice.create({
@@ -27,6 +28,7 @@ export const addInvoice = async (req) => {
     paymentMode,
     paymentStatus,
     customerName,
+    invoicePdfUrl
   });
 
   const createdInvoice = await Invoice.findById(invoice._id);

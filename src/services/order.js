@@ -1,7 +1,16 @@
 import { Order } from "../models/order.js";
+import { Customer } from "../models/customer.js";
+import BlockedRole from "../models/email.js";
+import { sendEmail } from "../core/common/nodeMailer.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
 import { Item } from "../models/item.js";
+import { sentMailAfterCloseOrder } from "../core/Template/sentMailAfterCloseOrder.js";
+import fs from "fs";
+import sendInvoiceEmail from "../core/common/sendInvoiceMail.js";
+import generateInvoicePDF from "./pdfInvoice.js";
+
+
 
 export const addOrder = async (req) => {
   const {
@@ -18,7 +27,8 @@ export const addOrder = async (req) => {
     type,
     paymentMode,
     phone,
-    table
+    table,
+    orderStatus
   } = req?.body;
 
   const order = await Order.create({
@@ -35,7 +45,8 @@ export const addOrder = async (req) => {
     type,
     paymentMode,
     phone,
-    table
+    table,
+    orderStatus
   });
 
   const createdOrder = await Order.findById(order._id);
@@ -58,9 +69,9 @@ export const getOrder = async () => {
 };
 export const getTotalSales = async (req) => {
   try {
-    const {year} = req?.query;
+    const { year } = req?.query;
     const condition_obj = {};
-   if (year) {
+    if (year) {
       condition_obj["createdAt"] = {
         $gte: new Date(`${year}-01-01`),
         $lt: new Date(`${parseInt(year) + 1}-01-01`),
@@ -152,6 +163,7 @@ export const getTotalQty = async (req) => {
     throw new Error(data_not_found);
   }
 };
+
 export const getOrderbyId = async (req) => {
   const { id } = req?.params;
   if (!id) {
@@ -200,7 +212,7 @@ export const updateOrder = async (id, updatedData) => {
   if (!itemdata) {
     throw new CustomError(statusCodes?.notFound, "Item not found", errorCodes?.not_found);
   }
-const newItem = {
+  const newItem = {
     id: itemdata._id,
     name: itemdata.name,
     price: itemdata.price,
@@ -208,14 +220,80 @@ const newItem = {
     cost: itemdata.cost
   };
 
-
   const order = await Order.findById(id);
   if (!order) {
     throw new CustomError(statusCodes?.notFound, "Order not found", errorCodes?.not_found);
   }
-order.items.push(newItem);
-order.totalPrice = order.totalPrice + (newItem.price * newItem.quantity);
-  
+  order.items.push(newItem);
+  order.totalPrice = order.totalPrice + (newItem.price * newItem.quantity);
+
   await order.save();
   return order;
 };
+
+
+export const updateOrderStatus = async (orderId, updatedData) => {
+
+  if (!orderId || !updatedData.orderStatus) {
+    throw new CustomError(statusCodes.badRequest, "Missing required fields", errorCodes.bad_request);
+  }
+
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new CustomError(statusCodes.notFound, "Order not found", errorCodes.not_found);
+  }
+  console.log("order", order);
+
+
+  const customer = await Customer.findById(order.customerId);
+  if (!customer) {
+    throw new CustomError(
+      statusCodes.notFound,
+      "Customer not found",
+      errorCodes.not_found
+    );
+  }
+  console.log("customer", customer);
+
+  order.orderStatus = updatedData.orderStatus;
+  await order.save();
+
+  const orderDetails = {
+    orderId: order._id,
+    orderStatus: updatedData.orderStatus,
+    totalPrice: order.totalPrice,
+    customerName: customer?.name || 'N/A',
+    customerEmail: customer.email,
+    items: order.items,
+
+  };
+
+  try {
+    const invoicePath = await generateInvoicePDF(orderDetails);
+    await sendInvoiceEmail(customer.email, invoicePath);
+
+    if (fs.existsSync(invoicePath)) {
+      fs.unlinkSync(invoicePath);
+    }
+  } catch (error) {
+    console.error("Error processing invoice:", error);
+    throw new Error("Failed to generate or send invoice.");
+  }
+
+
+
+  const isBlocked = await BlockedRole.findOne({ role: "On Invoice Generate" });
+  if (isBlocked?.isBlocked) {
+    await sendEmail(
+      customer?.email,
+      "Welcome to Our Company",
+      "",
+      sentMailAfterCloseOrder(order?.totalPrice),
+    );
+  } else {
+    console.log("Email not sent as 'client' role is blocked.");
+  }
+
+  return { success: true, message: "Order status updated", order };
+};
+

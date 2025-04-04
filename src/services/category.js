@@ -1,7 +1,7 @@
 import { Category } from "../models/category.js";
 import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
 import CustomError from "../utils/exception.js";
-import XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 export const addCategory = async (req) => {
   const { categoryName, desc, isAvailable = true } = req.body;
@@ -86,45 +86,69 @@ export const updateCategory = async (id, updatedData) => {
   return category;
 };
 
-export const bulkUploadCategory = async (req) => {
-  const file = req?.file?.path;
-  const workbook = XLSX.readFile(file);
-  const sheetName = workbook.SheetNames[0];
-  const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-  const categories = data.map((row) => ({
-    ...row,
-  }));
-  const keysToCheck = ["categoryName"];
-  const checkAllKeys = categories.every((obj) =>
-    keysToCheck.every((key) => key in obj),
-  );
-  if (!checkAllKeys) {
-    throw new CustomError(
-      statusCodes?.badRequest,
-      Message?.inValidData,
-      errorCodes?.invalid_format,
-    );
-  }
-  for (const category of categories) {
-    try {
-      const isCategoryAlreadyExist = await Category.findOne({
-        categoryName: category.categoryName,
-        isDeleted: false,
-      });
-      if (!isCategoryAlreadyExist) {
-        const newCategory = await Category.create(category);
-        if (!newCategory) {
-          throw new CustomError(
-            statusCodes?.badRequest,
-            Message?.notCreated,
-            errorCodes?.not_created,
-          );
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
-  return categories;
+export const bulkUploadCategory = async (req) => {
+  try {
+    const file = req?.file?.path;
+    if (!file) {
+      throw new CustomError(
+        statusCodes?.badRequest,
+        Message?.fileNotProvided,
+        errorCodes?.file_missing
+      );
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(file);
+    const worksheet = workbook.worksheets[0];
+
+    const categories = [];
+    const keysToCheck = ["categoryName"];
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return; 
+
+      const category = {
+        categoryName: row.getCell(1).text.trim(),
+      };
+
+      
+      if (!keysToCheck.every((key) => category[key])) {
+        throw new CustomError(
+          statusCodes?.badRequest,
+          Message?.inValidData,
+          errorCodes?.invalid_format
+        );
+      }
+
+      categories.push(category);
+    });
+
+    for (const category of categories) {
+      try {
+        const isCategoryAlreadyExist = await Category.findOne({
+          categoryName: category.categoryName,
+          isDeleted: false,
+        });
+
+        if (!isCategoryAlreadyExist) {
+          const newCategory = await Category.create(category);
+          if (!newCategory) {
+            throw new CustomError(
+              statusCodes?.badRequest,
+              Message?.notCreated,
+              errorCodes?.not_created
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error processing category:", category, error);
+      }
+    }
+
+    return categories;
+  } catch (error) {
+    console.error("Bulk upload failed:", error);
+    throw error;
+  }
 };

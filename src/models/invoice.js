@@ -37,6 +37,10 @@ const invoiceSchema = new Schema(
     },
 
     items: [],
+    invoicePdfUrl : {
+      type: String,
+      
+    }
   },
   { timestamps: true },
 );

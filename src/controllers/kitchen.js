@@ -25,5 +25,5 @@ export default {
     addKitchenOrder,
     updateKitchenOrderById,
     findAllKitchenOrder,
-    findKitchenOrderById
+        findKitchenOrderById
 };

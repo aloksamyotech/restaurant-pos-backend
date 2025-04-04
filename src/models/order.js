@@ -45,6 +45,10 @@ const orderSchema = new Schema(
     },
     table: {
       type: String
+    },
+    orderStatus:{
+      type: String,
+      default:"pending" 
     }
   },
   { timestamps: true },

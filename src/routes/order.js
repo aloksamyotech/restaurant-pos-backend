@@ -16,5 +16,6 @@ router.get(
   asyncHandler(orderController.getOrderByCustomerId),
 );
 router.put("/updateOrder/:id", asyncHandler(orderController.updateOrder));
+router.put("/updateOrderStatus/:id", asyncHandler(orderController.updateOrderStatus));
 
 export default router;
