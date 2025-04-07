@@ -43,6 +43,7 @@ export const Message = {
   notUpdate: "Update Failed",
   serverError: "Intrnal Server Error",
   ItemNotFound: "Item not found",
+  data_add:'Data added successfully'
 };
 
 export const errorCodes = Object.freeze({

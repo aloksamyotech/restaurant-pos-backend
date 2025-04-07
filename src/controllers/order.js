@@ -42,12 +42,21 @@ const updateOrder = async (req, res, next) => {
   res.status(statusCodes?.ok).send(updatedOrder);
 };
 
+const updateOrderStatus = async (req, res, next) => {
+  const { id } = req?.params;
+  const updatedData = req?.body;
+  const updatedOrder = await orderService?.updateOrderStatus(id, updatedData);
+
+  res.status(statusCodes?.ok).send(updatedOrder);
+};
+
 export default {
   addOrder,
   deleteOrder,
   getOrder,
   fetchOrder,
   updateOrder,
+  updateOrderStatus,
   getOrderByCustomerId,
   getTotalSales,
   getTotalQty,
