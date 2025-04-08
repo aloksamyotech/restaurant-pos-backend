@@ -10,5 +10,6 @@ router.patch("/updateKitchenOrder/:id", asyncHandler(kitchenController.updateKit
 router.get("/findAllKitchenOrder", asyncHandler(kitchenController.findAllKitchenOrder));
 router.get("/findAllKitchenOrderById/:id", asyncHandler(kitchenController.findKitchenOrderById));
 router.get("/findAllKitchenOrderById/:id", asyncHandler(kitchenController.findKitchenOrderById));
+router.patch("/updateOrderStatus/:id", asyncHandler(kitchenController.updateOrderStatusById));
 
 export default router;
