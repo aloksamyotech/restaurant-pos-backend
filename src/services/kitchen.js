@@ -138,11 +138,11 @@ export const updateOrderStatus = async (kitchenId, updatedData) => {
   
     const orderDetails = {
       orderId: order._id,
-      orderStatus: updatedData.status,
-      totalPrice: order.totalPrice,
+      orderStatus: updatedData?.status,
+      totalPrice: order?.totalPrice,
       customerName: customer?.name || 'N/A',
-      customerEmail: customer.email,
-      items: order.items,
+      customerEmail: customer?.email,
+      items: order?.items,
   
     };
   
