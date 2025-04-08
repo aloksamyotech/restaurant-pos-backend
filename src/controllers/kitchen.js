@@ -10,6 +10,12 @@ const updateKitchenOrderById = async (req, res) => {
     const kitchenOrderData = await kitchenService.updateKitchenOrder(req);
     res.status(statusCodes?.created).send(kitchenOrderData);
 };
+const updateOrderStatusById = async (req, res) => {
+    const { id } = req?.params;
+    const updatedData = req?.body;
+    const kitchenOrderData = await kitchenService.updateOrderStatus(id,updatedData);
+    res.status(statusCodes?.created).send(kitchenOrderData);
+};
 
 const findAllKitchenOrder = async (req, res) => {
     const kitchenOrderData = await kitchenService.findAllKitchenOrder(req);
@@ -25,5 +31,6 @@ export default {
     addKitchenOrder,
     updateKitchenOrderById,
     findAllKitchenOrder,
-        findKitchenOrderById
+    findKitchenOrderById,
+    updateOrderStatusById
 };

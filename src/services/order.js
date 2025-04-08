@@ -242,7 +242,7 @@ export const updateOrderStatus = async (orderId, updatedData) => {
   if (!order) {
     throw new CustomError(statusCodes.notFound, "Order not found", errorCodes.not_found);
   }
-  console.log("order", order);
+ 
 
 
   const customer = await Customer.findById(order.customerId);
@@ -253,7 +253,7 @@ export const updateOrderStatus = async (orderId, updatedData) => {
       errorCodes.not_found
     );
   }
-  console.log("customer", customer);
+ 
 
   order.orderStatus = updatedData.orderStatus;
   await order.save();
