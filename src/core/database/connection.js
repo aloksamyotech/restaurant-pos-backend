@@ -37,6 +37,7 @@ const connectDB = async () => {
               "Expense Report",
               "Kitchen",
               "Table",
+              "Profile"
               
             ],
           });
