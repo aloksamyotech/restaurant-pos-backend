@@ -46,6 +46,9 @@ const employeeSchema = new Schema(
     currency: {
       type: String,
     },
+    tax: {
+      type: Number,
+    },
     companyLogo: {
       type: String,
     },
