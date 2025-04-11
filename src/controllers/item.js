@@ -25,8 +25,10 @@ const fetchItem = async (req, res, next) => {
 const updateItem = async (req, res, next) => {
   const { id } = req.params;
   const updatedData = req.body;
-
-  if (req?.file) {
+  if (req?.body?.ingredients) {
+    updatedData.ingredientId = JSON.parse(req?.body?.ingredients);
+    }
+ if (req?.file) {
     updatedData.itemImage = `/uploads/${req.file.filename}`;
   }
 
