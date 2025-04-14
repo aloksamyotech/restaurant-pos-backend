@@ -56,7 +56,7 @@ const updateEmployeePermission = async (req, res, next) => {
   const updatedEmployeePermission = await userService.updateEmployeePermission(
     req,
     res,
-    next,
+    next
   );
 
   res.status(statusCodes?.ok).send(updatedEmployeePermission);
@@ -71,6 +71,5 @@ export default {
   deleteEmployee,
   updateEmployeePermission,
   updateLogo,
-  updatePassword
-  
+  updatePassword,
 };
