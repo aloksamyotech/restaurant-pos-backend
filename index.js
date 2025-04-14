@@ -63,7 +63,7 @@ app.use('/api/v1/kitchen', kitchenRouter)
 app.use('/api/v1/email', emailRouter)
 app.use(globalExceptionHandler);
 
-app.use("/dummy", (req, res) => {
+app.use("/api/v1/dummy", (req, res) => {
     res.send("Dummy response for testing purposes");
 });
 
