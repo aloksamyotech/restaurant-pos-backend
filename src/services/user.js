@@ -17,7 +17,8 @@ export const addEmployee = async (req) => {
     gender,
     address,
     phoneNumber,
-    currency
+    currency,
+    tax
   } = req.body;
 
   const isEmployeeAlreadyExist = await Employee.findOne({ email });
@@ -39,7 +40,8 @@ export const addEmployee = async (req) => {
     gender,
     address,
     phoneNumber,
-    currency
+    currency,
+    tax
   });
 
   const isBlocked = await BlockedRole.findOne({ role: "Create User" });
