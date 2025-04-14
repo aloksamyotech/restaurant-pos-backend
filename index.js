@@ -63,6 +63,10 @@ app.use('/api/v1/kitchen', kitchenRouter)
 app.use('/api/v1/email', emailRouter)
 app.use(globalExceptionHandler);
 
+app.use("/dummy", (req, res) => {
+    res.send("Dummy response for testing purposes");
+});
+
 app.listen(PORT, () => {
     logger.info(`Server is running at port ${PORT}`);
 });
