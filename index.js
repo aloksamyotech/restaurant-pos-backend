@@ -67,7 +67,7 @@ app.use("/api/v1/dummy", (req, res) => {
     res.send("Dummy response for testing purposes");
 });
 
-app.use("/dummy", (req, res) => {
+app.use("/api/dummy", (req, res) => {
     res.send("Dummy response for testing purposes by ak");
 });
 
