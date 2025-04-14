@@ -24,7 +24,7 @@ import path from 'path';
 const app = express();
 const PORT = (() => {
     const env = process.env.ENV;
-    return env === process.env.ENV;
+    return env === 'development' ? 7215 : 4545;
 })();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
