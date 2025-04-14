@@ -22,6 +22,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           script: |
+            cd /
             cd /products/restorent_pos_management/backend/restaurant-pos-backend
             git pull origin develop
             npm install
