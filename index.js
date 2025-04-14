@@ -67,6 +67,10 @@ app.use("/api/v1/dummy", (req, res) => {
     res.send("Dummy response for testing purposes");
 });
 
+app.use("/dummy", (req, res) => {
+    res.send("Dummy response for testing purposes by ak");
+});
+
 app.listen(PORT, () => {
     logger.info(`Server is running at port ${PORT}`);
 });
