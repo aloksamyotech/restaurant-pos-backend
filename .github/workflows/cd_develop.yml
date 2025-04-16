@@ -31,6 +31,7 @@ jobs:
             cd /
             cd /products/restorent_pos_management/backend/restaurant-pos-backend
             git stash
+            git fetch --all
             git checkout prod
             git pull origin prod
             git log -1
