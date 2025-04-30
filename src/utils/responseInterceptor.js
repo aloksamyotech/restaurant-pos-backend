@@ -1,10 +1,13 @@
+import { key } from "../core/common/constant.js";
+import { encrypt, encryptResponse, encryptWithAESKey } from "../core/common/crypto.js";
+import { generateRandomString } from "../core/crypto/cr.js";
+
 const responseInterceptor = (req, res, next) => {
   const oldSend = res.json;
 
   res.json = (data) => {
-    console.log("data================>>>>>>", data);
-
-    if (data && data.status && data.status === "error") {
+    
+if (data && data.status && data.status === "error") {
       const formattedResponse = {
         success: false,
         data: {},
@@ -12,8 +15,9 @@ const responseInterceptor = (req, res, next) => {
         error: data.errorCode || data.message || "Unknown Error",
         timestamp: new Date().toISOString(),
       };
-      console.log("formattedResponse", formattedResponse);
-      oldSend.call(res, formattedResponse);
+ 
+      const encryptedResponseData = encryptResponse(formattedResponse);
+      oldSend.call(res, encryptedResponseData);
     } else {
       const formattedResponse = {
         success: true,
@@ -22,7 +26,8 @@ const responseInterceptor = (req, res, next) => {
         error: null,
         timestamp: new Date().toISOString(),
       };
-      oldSend.call(res, formattedResponse);
+      const encryptedResponseData = encryptResponse(formattedResponse);
+      oldSend.call(res, encryptedResponseData);
     }
   };
 
@@ -34,8 +39,8 @@ const responseInterceptor = (req, res, next) => {
       error: error || message,
       timestamp: new Date().toISOString(),
     };
-
-    res.status(statusCode).json(formattedResponse);
+    const encryptedResponseData = encryptResponse(formattedResponse);
+    res.status(statusCode).json(encryptedResponseData);
   };
 
   next();
@@ -43,68 +48,4 @@ const responseInterceptor = (req, res, next) => {
 
 export default responseInterceptor;
 
-// ---------------------------------------------------
 
-// const responseInterceptor = (req, res, next) => {
-//     const oldSend = res.send;
-//     const oldJson = res.json;
-//     const oldCookie = res.cookie;
-
-//     console.log("oldSend---", oldSend);
-//     console.log("oldJson---", oldJson);
-//     console.log("oldCookie---", oldCookie);
-
-//     res.json = (data) => {
-//         console.log("data================<<<<<<<<<", data);
-
-//         if (data && data.status && data.status === 'error') {
-//             const formattedResponse = {
-//                 success: false,
-//                 data: {},
-//                 message: data.message || "Error occurred",
-//                 error: data.errorCode || data.message || "Unknown Error",
-//                 timestamp: new Date().toISOString(),
-//             };
-//             oldJson.call(res, formattedResponse);
-//         } else {
-//             const formattedResponse = {
-//                 success: true,
-//                 data: data || {},
-//                 message: data.message || "Success",
-//                 error: null,
-//                 timestamp: new Date().toISOString(),
-//             };
-//             oldJson.call(res, formattedResponse);
-//         }
-//     };
-
-//     res.send = (data) => {
-//         console.log("data================>>>>>>", data);
-
-//         if (data && typeof data === 'object') {
-//             res.json(data);
-//         } else {
-//             oldSend.call(res, data);
-//         }
-//     };
-
-//     res.cookie = (name, value, options) => {
-//         console.log(`Setting cookie ${name}`);
-//         oldCookie.call(res, name, value, options);
-//     };
-
-//     res.error = (error, statusCode = 500, message = "Internal Server Error") => {
-//         const formattedResponse = {
-//             success: false,
-//             data: {},
-//             message,
-//             error: error || message,
-//             timestamp: new Date().toISOString(),
-//         };
-//         res.status(statusCode).json(formattedResponse);
-//     };
-
-//     next();
-// };
-
-// export default responseInterceptor;
