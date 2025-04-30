@@ -126,3 +126,5 @@ export const errorCodes = Object.freeze({
   missing_auth_token: "MISSING_AUTH_TOKEN",
   invalid_operation: "INVALID_OPERATION",
 });
+
+export const key="shubhum";

@@ -16,6 +16,8 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.7",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
@@ -29,6 +31,7 @@
     "pdfkit": "^0.16.0",
     "pdfkit-table": "^0.1.99",
     "stack-trace": "^1.0.0-pre2",
+    "twilio": "^5.5.2",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
