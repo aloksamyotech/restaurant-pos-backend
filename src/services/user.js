@@ -193,13 +193,27 @@ export const updateEmployee = async (id, updatedData) => {
     );
   }
 
+  if (
+    employee.role === 'superAdmin' &&
+    (updatedData.tax !== undefined || updatedData.currency !== undefined)
+  ) {
+    const propagateData = {};
+    if (updatedData.tax !== undefined) propagateData.tax = updatedData.tax;
+    if (updatedData.currency !== undefined) propagateData.currency = updatedData.currency;
+
+    await Employee.updateMany(
+      { role: { $ne: 'superAdmin' } }, 
+      propagateData
+    );
+  }
+
   return employee;
 };
 
 export const updatelogo = async (req) => {
   const id = req.user._id;
   if (!id) {
-    throw new CustomError(
+    throw new CustomError(  
       statusCodes?.badRequest,
       Message?.inValid,
       errorCodes?.bad_request,
@@ -220,6 +234,10 @@ export const updatelogo = async (req) => {
       errorCodes?.action_failed,
     );
   }
+  await Employee.updateMany(
+    { role: { $ne: 'superAdmin' } }, 
+    { companyLogo: updatedLogo?.companyLogo }
+  );
   return updatedLogo;
 };
 
