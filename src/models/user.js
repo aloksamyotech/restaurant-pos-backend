@@ -52,6 +52,9 @@ const employeeSchema = new Schema(
     companyLogo: {
       type: String,
     },
+    tax:{
+       type:Number
+    },
     permissions: {
       type: [],
     },
