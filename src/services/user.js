@@ -1,0 +1,287 @@
+import { Employee } from "../models/user.js";
+import { errorCodes, Message, statusCodes } from "../core/common/constant.js";
+import CustomError from "../utils/exception.js";
+import getAccountCreationEmailTemplate from "../core/Template/accountCreationTemplate.js";
+import BlockedRole from "../models/email.js";
+import { sendEmail } from "../core/common/nodeMailer.js";
+
+
+
+export const addEmployee = async (req) => {
+  const {
+    firstName,
+    lastName,
+    role,
+    email,
+    password,
+    gender,
+    address,
+    phoneNumber,
+    currency,
+    tax
+  } = req.body;
+
+  const isEmployeeAlreadyExist = await Employee.findOne({ email });
+
+  if (isEmployeeAlreadyExist) {
+    throw new CustomError(
+      statusCodes?.conflict,
+      Message?.alreadyExist,
+      errorCodes?.already_exist,
+    );
+  }
+
+  const employee = await Employee.create({
+    firstName,
+    lastName,
+    role,
+    email,
+    password,
+    gender,
+    address,
+    phoneNumber,
+    currency,
+    tax
+  });
+
+  const isBlocked = await BlockedRole.findOne({ role: "Create User" });
+  if (isBlocked?.isBlocked) {
+    await sendEmail(
+      email,
+      "Welcome to Our Company",
+      "",
+      getAccountCreationEmailTemplate(firstName),
+    );
+  } else {
+    console.log("Email not sent as 'client' role is blocked.");
+  }
+
+  const createdEmployee = await Employee.findById(employee._id).select(
+    "-password -refreshToken",
+  );
+
+  if (!createdEmployee) {
+    return new CustomError(
+      statusCodes?.serviceUnavailable,
+      Message?.serverError,
+      errorCodes?.service_unavailable,
+    );
+  }
+
+  return createdEmployee;
+};
+
+const generateAccessAndRefreshTokens = async (userId) => {
+  try {
+    const user = await Employee.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new CustomError(
+      statusCodes?.internalServerError,
+      "Something went wrong while generating refresh and access tokens.",
+      errorCodes?.server_error,
+    );
+  }
+};
+
+export const loginEmployee = async (req) => {
+  const { email, password } = req.body;
+
+ 
+
+  const user = await Employee.findOne({ email });
+  if (!user) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.userNotFound,
+      errorCodes?.not_found,
+    );
+  }
+
+  const passwordVerify = await user.isPasswordCorrect(password);
+
+  if (!passwordVerify) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.inValid,
+      errorCodes?.invalid_credentials,
+    );
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id,
+  );
+
+  const loginEmployee = await Employee.findById(user._id).select(
+    "-password -refreshToken",
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return {
+    accessToken,
+    refreshToken,
+    options,
+    loginEmployee,
+  };
+};
+
+export const deleteEmployee = async (req) => {
+  const { id } = req.params;
+
+  const employee = await Employee.findById(id);
+  if (!employee) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notFound,
+      errorCodes?.not_found,
+    );
+  }
+
+  await Employee.findByIdAndDelete(id);
+
+  return {
+    message: Message?.deletedSuccessfully,
+    employeeId: id,
+  };
+};
+
+export const getEmployee = async () => {
+  const employee = await Employee.find().sort({ createdAt: -1 });
+  return employee;
+};
+export const getEmployeebyId = async (req) => {
+  const { id } = req?.params;
+  if (!id) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.idRequired,
+      errorCodes?.id_required,
+    );
+  }
+  const employee = await Employee.findOne({ _id: id });
+
+  if (!employee) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Employee not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  return employee;
+};
+
+export const updateEmployee = async (id, updatedData) => {
+  const employee = await Employee.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
+
+  if (!employee) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Employee not found",
+      errorCodes?.not_found,
+    );
+  }
+
+  if (
+    employee.role === 'superAdmin' &&
+    (updatedData.tax !== undefined || updatedData.currency !== undefined)
+  ) {
+    const propagateData = {};
+    if (updatedData.tax !== undefined) propagateData.tax = updatedData.tax;
+    if (updatedData.currency !== undefined) propagateData.currency = updatedData.currency;
+
+    await Employee.updateMany(
+      { role: { $ne: 'superAdmin' } }, 
+      propagateData
+    );
+  }
+
+  return employee;
+};
+
+export const updatelogo = async (req) => {
+  const id = req.user._id;
+  if (!id) {
+    throw new CustomError(  
+      statusCodes?.badRequest,
+      Message?.inValid,
+      errorCodes?.bad_request,
+    );
+  }
+  const updateData = {
+    companyLogo: req.file ? `/uploads/${req.file.filename}` : null,
+  };
+  const updatedLogo = await Employee.findOneAndUpdate(
+    { _id: id },
+    updateData,
+    { new: true },
+  );
+  if (!updatedLogo) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notUpdate,
+      errorCodes?.action_failed,
+    );
+  }
+  await Employee.updateMany(
+    { role: { $ne: 'superAdmin' } }, 
+    { companyLogo: updatedLogo?.companyLogo }
+  );
+  return updatedLogo;
+};
+
+export const updatePassword = async (req) => {
+  const { newPassword } = req.body;
+  const id = req.user._id;
+  const user = await Employee.findOne({
+    _id: id,
+  });
+  if (!user) {
+    throw new CustomError(
+      statusCodes?.unauthorized,
+      "Invalid or expired reset token.",
+      errorCodes?.invalid_token,
+    );
+  }
+  user.password = newPassword;
+  await user.save();
+  return user;
+};
+
+
+export const updateEmployeePermission = async (req) => {
+  const { id } = req.params;
+
+  const { permissions } = req.body;
+  if (!id || !permissions) {
+    throw new CustomError(
+      statusCodes?.badRequest,
+      Message?.inValid,
+      errorCodes?.bad_request,
+    );
+  }
+  const updatedUser = await Employee.findOneAndUpdate(
+    { _id: id },
+    { permissions: permissions },
+    { new: true },
+  );
+  if (!updatedUser) {
+    throw new CustomError(
+      statusCodes?.notFound,
+      Message?.notUpdate,
+      errorCodes?.action_failed,
+    );
+  }
+  return updatedUser;
+};
