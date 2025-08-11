@@ -9,8 +9,11 @@ import { sentMailAfterCloseOrder } from "../core/Template/sentMailAfterCloseOrde
 import fs from "fs";
 import sendInvoiceEmail from "../core/common/sendInvoiceMail.js";
 import generateInvoicePDF from "./pdfInvoice.js";
-
-
+import { Payment } from "../models/payment.js";
+import { Invoice } from "../models/invoice.js";
+import { Kitchen } from "../models/kitchen.js";
+import { Table } from "../models/table.js";
+import mongoose from "mongoose";
 
 export const addOrder = async (req) => {
   const {
@@ -28,7 +31,7 @@ export const addOrder = async (req) => {
     paymentMode,
     phone,
     table,
-    orderStatus
+    orderStatus,
   } = req?.body;
 
   const order = await Order.create({
@@ -46,7 +49,7 @@ export const addOrder = async (req) => {
     paymentMode,
     phone,
     table,
-    orderStatus
+    orderStatus,
   });
 
   const createdOrder = await Order.findById(order._id);
@@ -55,11 +58,160 @@ export const addOrder = async (req) => {
     return new CustomError(
       statusCodes?.serviceUnavailable,
       Message?.serverError,
-      errorCodes?.service_unavailable,
+      errorCodes?.service_unavailable
     );
   }
 
   return createdOrder;
+};
+export const placeOrder = async (req) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const {
+      items,
+      phone,
+      email,
+      type,
+      customerName,
+      discount = 0,
+      paymentMode,
+      table,
+      employee,
+      status,
+      expectedTime,
+      tax,
+      paymentStatus,
+      chef,
+      orderStatus,
+    } = req?.body;
+    let customer = await Customer.findOne({ phone }).session(session);
+    if (!customer) {
+      customer = (
+        await Customer.create([{ customerName, email, phone }], { session })
+      )[0];
+    }
+
+
+    const itemNames = items.map((item) => item.name);
+
+    const dbItems = await Item.find({ name: { $in: itemNames } })
+      .lean()
+      .session(session);
+
+    if (dbItems.length !== itemNames.length) {
+      throw new Error("One or more item names are invalid");
+    }
+
+   
+    const enrichedItems = items.map((agentItem) => {
+      const dbItem = dbItems.find(
+        (db) => db.name.toLowerCase() === agentItem.name.toLowerCase()
+      );
+
+      return {
+        id: dbItem._id,
+        name: dbItem.name,
+        quantity: agentItem.quantity,
+        price: dbItem.price,
+        cost: dbItem.cost,
+      };
+    });
+    const totalAmount = enrichedItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    const order = (
+      await Order.create(
+        [
+          {
+            customerId: customer._id,
+            items: enrichedItems,
+            phone,
+            type,
+            totalPrice: totalAmount,
+            discount,
+            paymentMode,
+            table,
+
+            employee,
+            status,
+            expectedTime,
+            tax,
+            paymentStatus,
+            chef,
+            orderStatus,
+          },
+        ],
+        { session }
+      )
+    )[0];
+
+    const payment = (
+      await Payment.create(
+        [
+          {
+            orderId: order._id,
+            paymentMode,
+            amount: totalAmount,
+            paymentStatus,
+          },
+        ],
+        { session }
+      )
+    )[0];
+
+    const invoice = (
+      await Invoice.create(
+        [
+          {
+            orderId: order._id,
+            paymentId: payment._id,
+            customerId: customer._id,
+
+            amount: totalAmount,
+            tax,
+            discount,
+            paymentMode,
+            paymentStatus,
+            customerName,
+          },
+        ],
+        { session }
+      )
+    )[0];
+
+    const kitchen = (
+      await Kitchen.create(
+        [
+          {
+            order: order._id,
+            // table: tableNumber,
+            status: "pending",
+          },
+        ],
+        { session }
+      )
+    )[0];
+
+    await session.commitTransaction();
+    session.endSession();
+    //   if (type === 'Dining' && tableId) {
+    //   await Table.findByIdAndUpdate(tableId, { status: 'Occupied' });
+    // }
+    return {
+      customerId: customer._id,
+      orderId: order._id,
+      paymentId: payment._id,
+      invoiceId: invoice._id,
+      kitchenId: kitchen._id,
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 export const getOrder = async () => {
@@ -170,7 +322,7 @@ export const getOrderbyId = async (req) => {
     throw new CustomError(
       statusCodes?.badRequest,
       Message?.idRequired,
-      errorCodes?.id_required,
+      errorCodes?.id_required
     );
   }
   const order = await Order.findOne({ _id: id });
@@ -179,7 +331,7 @@ export const getOrderbyId = async (req) => {
     throw new CustomError(
       statusCodes?.notFound,
       "Order not found",
-      errorCodes?.not_found,
+      errorCodes?.not_found
     );
   }
 
@@ -191,7 +343,7 @@ export const getOrderByCustomerId = async (req) => {
     throw new CustomError(
       statusCodes?.badRequest,
       Message?.idRequired,
-      errorCodes?.id_required,
+      errorCodes?.id_required
     );
   }
   const order = await Order.find({ customerId: id });
@@ -200,7 +352,7 @@ export const getOrderByCustomerId = async (req) => {
     throw new CustomError(
       statusCodes?.notFound,
       "Order not found",
-      errorCodes?.not_found,
+      errorCodes?.not_found
     );
   }
 
@@ -210,40 +362,52 @@ export const getOrderByCustomerId = async (req) => {
 export const updateOrder = async (id, updatedData) => {
   const itemdata = await Item.findById(updatedData.items);
   if (!itemdata) {
-    throw new CustomError(statusCodes?.notFound, "Item not found", errorCodes?.not_found);
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Item not found",
+      errorCodes?.not_found
+    );
   }
   const newItem = {
     id: itemdata._id,
     name: itemdata.name,
     price: itemdata.price,
     quantity: updatedData.quantity,
-    cost: itemdata.cost
+    cost: itemdata.cost,
   };
 
   const order = await Order.findById(id);
   if (!order) {
-    throw new CustomError(statusCodes?.notFound, "Order not found", errorCodes?.not_found);
+    throw new CustomError(
+      statusCodes?.notFound,
+      "Order not found",
+      errorCodes?.not_found
+    );
   }
   order.items.push(newItem);
-  order.totalPrice = order.totalPrice + (newItem.price * newItem.quantity);
+  order.totalPrice = order.totalPrice + newItem.price * newItem.quantity;
 
   await order.save();
   return order;
 };
 
-
 export const updateOrderStatus = async (orderId, updatedData) => {
-
   if (!orderId || !updatedData.orderStatus) {
-    throw new CustomError(statusCodes.badRequest, "Missing required fields", errorCodes.bad_request);
+    throw new CustomError(
+      statusCodes.badRequest,
+      "Missing required fields",
+      errorCodes.bad_request
+    );
   }
 
   const order = await Order.findById(orderId);
   if (!order) {
-    throw new CustomError(statusCodes.notFound, "Order not found", errorCodes.not_found);
+    throw new CustomError(
+      statusCodes.notFound,
+      "Order not found",
+      errorCodes.not_found
+    );
   }
- 
-
 
   const customer = await Customer.findById(order.customerId);
   if (!customer) {
@@ -253,7 +417,6 @@ export const updateOrderStatus = async (orderId, updatedData) => {
       errorCodes.not_found
     );
   }
- 
 
   order.orderStatus = updatedData.orderStatus;
   await order.save();
@@ -262,10 +425,9 @@ export const updateOrderStatus = async (orderId, updatedData) => {
     orderId: order._id,
     orderStatus: updatedData.orderStatus,
     totalPrice: order.totalPrice,
-    customerName: customer?.name || 'N/A',
+    customerName: customer?.name || "N/A",
     customerEmail: customer.email,
     items: order.items,
-
   };
 
   try {
@@ -280,15 +442,13 @@ export const updateOrderStatus = async (orderId, updatedData) => {
     throw new Error("Failed to generate or send invoice.");
   }
 
-
-
   const isBlocked = await BlockedRole.findOne({ role: "On Invoice Generate" });
   if (isBlocked?.isBlocked) {
     await sendEmail(
       customer?.email,
       "Welcome to Our Company",
       "",
-      sentMailAfterCloseOrder(order?.totalPrice),
+      sentMailAfterCloseOrder(order?.totalPrice)
     );
   } else {
     console.log("Email not sent as 'client' role is blocked.");
@@ -296,4 +456,3 @@ export const updateOrderStatus = async (orderId, updatedData) => {
 
   return { success: true, message: "Order status updated", order };
 };
-

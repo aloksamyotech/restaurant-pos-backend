@@ -6,7 +6,7 @@ const router = Router();
 import { orderController } from "../controllers/controllers.js";
 
 router.post("/addOrder", asyncHandler(orderController.addOrder));
-
+router.post("/placeOrder", asyncHandler(orderController.placeOrder));
 router.delete("/deleteOrder/:id", 
   asyncHandler(userAuth),
   asyncHandler(orderController.deleteOrder));

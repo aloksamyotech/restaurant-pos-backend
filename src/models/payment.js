@@ -17,6 +17,7 @@ const paymentSchema = new Schema(
     paymentStatus: {
       type: String,
       enum: ["Paid", "Unpaid"],
+      default:"Paid"
     },
   },
   { timestamps: true },

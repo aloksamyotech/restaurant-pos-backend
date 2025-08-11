@@ -7,6 +7,10 @@ const addOrder = async (req, res, next) => {
   const orderData = await orderService?.addOrder(req, res, next);
   res.status(statusCodes?.created).send(orderData);
 };
+const placeOrder = async (req, res, next) => {
+  const orderData = await orderService?.placeOrder(req, res, next);
+  res.status(statusCodes?.created).send(orderData);
+};
 
 const deleteOrder = async (req, res, next) => {
   const orderData = await orderService?.deleteOrder(req, res, next);
@@ -52,6 +56,7 @@ const updateOrderStatus = async (req, res, next) => {
 
 export default {
   addOrder,
+  placeOrder,
   deleteOrder,
   getOrder,
   fetchOrder,

@@ -25,6 +25,7 @@ const invoiceSchema = new Schema(
     paymentMode: {
       type: String,
       enum: ["Cash", "UPI", "Card"],
+      default:"Cash"
     },
     discount: {
       type: Number,
