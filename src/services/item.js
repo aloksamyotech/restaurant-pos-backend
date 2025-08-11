@@ -77,8 +77,13 @@ export const deleteItem = async (req) => {
   };
 };
 
-export const getItem = async () => {
-  const item = await Item.find()
+export const getItem = async (query) => {
+const {name}= query;
+const filter={};
+if(name){
+filter.name=new RegExp (name, 'i'); 
+}
+  const item = await Item.find(filter)
     .populate("categoryId", "categoryName")
     .populate("ingredientId", "name")
     .sort({ createdAt: -1 });

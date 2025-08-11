@@ -13,6 +13,7 @@ import generateInvoicePDF from "./pdfInvoice.js";
 
 
 export const addOrder = async (req) => {
+console.log("orderdetails", req.body);
   const {
     customerId,
     employee,

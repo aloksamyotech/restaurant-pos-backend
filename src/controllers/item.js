@@ -14,7 +14,7 @@ const deleteItem = async (req, res, next) => {
 };
 
 const getItem = async (req, res, next) => {
-  const item = await itemService.getItem(req, res, next);
+  const item = await itemService.getItem(req.query);
   res.status(statusCodes?.ok).send(item);
 };
 const fetchItem = async (req, res, next) => {

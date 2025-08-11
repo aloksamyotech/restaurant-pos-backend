@@ -1,3 +1,4 @@
+
 import express from "express";
 import corsConfig from "./src/core/config/cors.js";
 import connectDB from "./src/core/database/connection.js";
