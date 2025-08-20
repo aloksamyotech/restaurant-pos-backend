@@ -70,10 +70,10 @@ export const placeOrder = async (req) => {
   try {
     const {
       items,
-      phone,
+      customer_number:phone,
       email,
-      type,
-      customerName,
+      order_type:type,
+      customer_name:customerName,
       discount = 0,
       paymentMode,
       table,

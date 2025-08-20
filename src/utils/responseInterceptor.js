@@ -2,7 +2,7 @@ const responseInterceptor = (req, res, next) => {
   const oldSend = res.json;
 
   res.json = (data) => {
-    console.log("data================>>>>>>", data);
+    
 
     if (data && data.status && data.status === "error") {
       const formattedResponse = {

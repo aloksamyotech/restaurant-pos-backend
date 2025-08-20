@@ -12,167 +12,188 @@ import { sentMailAfterCloseOrder } from "../core/Template/sentMailAfterCloseOrde
 import fs from "fs";
 import sendInvoiceEmail from "../core/common/sendInvoiceMail.js";
 import generateInvoicePDF from "./pdfInvoice.js";
-
-
+import { sendWhatsAppPDF } from "../core/common/sendWhatsapp.js";
 
 export const addKitchenOrder = async (req) => {
-    let { order, table } = req?.body;
-    order = new mongoose.Types.ObjectId(order);
-    const kitchenOrder = await Kitchen.create({
-        order: order,
-        status: 'pending',
-        table
-    });
-    const createdKitchenOrder = await Kitchen.findById(kitchenOrder._id).lean();
-    if (!createdKitchenOrder) {
-        return new CustomError(
-            statusCodes?.serviceUnavailable,
-            Message?.serverError,
-            errorCodes?.service_unavailable,
-        );
-    }
-    return createdKitchenOrder;
+  let { order, table } = req?.body;
+  order = new mongoose.Types.ObjectId(order);
+  const kitchenOrder = await Kitchen.create({
+    order: order,
+    status: "pending",
+    table,
+  });
+  const createdKitchenOrder = await Kitchen.findById(kitchenOrder._id).lean();
+  if (!createdKitchenOrder) {
+    return new CustomError(
+      statusCodes?.serviceUnavailable,
+      Message?.serverError,
+      errorCodes?.service_unavailable
+    );
+  }
+  return createdKitchenOrder;
 };
 
 export const updateKitchenOrder = async (req) => {
-    const kitchenOrderId = req?.params?.id
-    const { ...updatedValues } = req?.body;
+  const kitchenOrderId = req?.params?.id;
+  const { ...updatedValues } = req?.body;
 
-const isKitchenOrder = await Kitchen.findById(kitchenOrderId);
-    if (!isKitchenOrder) {
-        return new CustomError(
-            statusCodes?.serviceUnavailable,
-            Message?.serverError,
-            errorCodes?.service_unavailable,
-        );
-    }
-    const updatedData = await Kitchen.findOneAndUpdate({
-        _id: kitchenOrderId,
-
-    },
-        updatedValues
+  const isKitchenOrder = await Kitchen.findById(kitchenOrderId);
+  if (!isKitchenOrder) {
+    return new CustomError(
+      statusCodes?.serviceUnavailable,
+      Message?.serverError,
+      errorCodes?.service_unavailable
     );
-  const chefId=updatedValues?.chef;
- const chefData = await Employee.findById(chefId);
-  
-   
-   const fetchChefData = {
-      email: chefData?.email,
-      name: chefData?.firstName,
-      
-    };
-    
-      const isBlocked = await BlockedRole.findOne({ role: "chef Assign" });
-      if (isBlocked?.isBlocked) {
-        await sendEmail(
-            fetchChefData?.email,
-          "Welcome to Our Company",
-          "",
-          getChefAssignmentEmailTemplate(fetchChefData?.name),
-        );
-      } else {
-        console.log("Email not sent as 'client' role is blocked.");
-      }
+  }
+  const updatedData = await Kitchen.findOneAndUpdate(
+    {
+      _id: kitchenOrderId,
+    },
+    updatedValues
+  );
+  const chefId = updatedValues?.chef;
+  const chefData = await Employee.findById(chefId);
 
-    return updatedData;
+  const fetchChefData = {
+    email: chefData?.email,
+    name: chefData?.firstName,
+  };
+
+  const isBlocked = await BlockedRole.findOne({ role: "chef Assign" });
+  if (isBlocked?.isBlocked) {
+    await sendEmail(
+      fetchChefData?.email,
+      "Welcome to Our Company",
+      "",
+      getChefAssignmentEmailTemplate(fetchChefData?.name)
+    );
+  } else {
+    console.log("Email not sent as 'client' role is blocked.");
+  }
+
+  return updatedData;
 };
 
 export const findKitchenOrderById = async (req) => {
-    let kitchenOrderId = req?.params?.id
+  let kitchenOrderId = req?.params?.id;
 
-    kitchenOrderId = new mongoose.Types.ObjectId(kitchenOrderId)
-    const isKitchenOrder = await Kitchen.findById(kitchenOrderId).populate("chef", "firstName").populate("order", "type");
-    if (!isKitchenOrder) {
-        return new CustomError(
-            statusCodes?.serviceUnavailable,
-            Message?.serverError,
-            errorCodes?.service_unavailable,
-        );
-    }
+  kitchenOrderId = new mongoose.Types.ObjectId(kitchenOrderId);
+  const isKitchenOrder = await Kitchen.findById(kitchenOrderId)
+    .populate("chef", "firstName")
+    .populate("order", "type");
+  if (!isKitchenOrder) {
+    return new CustomError(
+      statusCodes?.serviceUnavailable,
+      Message?.serverError,
+      errorCodes?.service_unavailable
+    );
+  }
 
-    return isKitchenOrder;
+  return isKitchenOrder;
 };
 
 export const findAllKitchenOrder = async (req) => {
-    const isKitchenOrder = await Kitchen.find().populate("order", "type").sort({ createdAt: -1 });
-    if (!isKitchenOrder) {
-        return new CustomError(
-            statusCodes?.serviceUnavailable,
-            Message?.serverError,
-            errorCodes?.service_unavailable,
-        );
-    }
+  const isKitchenOrder = await Kitchen.find()
+    .populate("order", "type")
+    .sort({ createdAt: -1 });
+  if (!isKitchenOrder) {
+    return new CustomError(
+      statusCodes?.serviceUnavailable,
+      Message?.serverError,
+      errorCodes?.service_unavailable
+    );
+  }
 
-    return isKitchenOrder;
+  return isKitchenOrder;
 };
 
 export const updateOrderStatus = async (kitchenId, updatedData) => {
- 
+  if (!kitchenId || !updatedData.status) {
+    throw new CustomError(
+      statusCodes.badRequest,
+      "Missing required fields",
+      errorCodes.bad_request
+    );
+  }
 
-    if (!kitchenId || !updatedData.status) {
-      throw new CustomError(statusCodes.badRequest, "Missing required fields", errorCodes.bad_request);
-    }
-  
-    const KitchenData = await Kitchen.findById(kitchenId);
-    if (!KitchenData) {
-      throw new CustomError(statusCodes.notFound, "KitchenData not found", errorCodes.not_found);
-    }
-   
-    const order = await Order.findById(KitchenData?.order);
-    if (!order) {
-      throw new CustomError(statusCodes.notFound, "Order not found", errorCodes.not_found);
-    }
-  
-    const customer = await Customer.findById(order.customerId);
-    if (!customer) {
-      throw new CustomError(
-        statusCodes.notFound,
-        "Customer not found",
-        errorCodes.not_found
-      );
-    }
-   
-  
-    KitchenData.status = updatedData.status;
-    await KitchenData.save();
-  
-    const orderDetails = {
-      orderId: order._id,
-      orderStatus: updatedData?.status,
-      totalPrice: order?.totalPrice,
-      customerName: customer?.name || 'N/A',
-      customerEmail: customer?.email,
-      items: order?.items,
-  
-    };
-  
-    try {
-      const invoicePath = await generateInvoicePDF(orderDetails);
-      await sendInvoiceEmail(customer.email, invoicePath);
-  
-      if (fs.existsSync(invoicePath)) {
-        fs.unlinkSync(invoicePath);
-      }
-    } catch (error) {
-      console.error("Error processing invoice:", error);
-      throw new Error("Failed to generate or send invoice.");
-    }
-  
-  
-  
-    const isBlocked = await BlockedRole.findOne({ role: "On Invoice Generate" });
-    if (isBlocked?.isBlocked) {
-      await sendEmail(
-        customer?.email,
-        "Welcome to Our Company",
-        "",
-        sentMailAfterCloseOrder(order?.totalPrice),
-      );
-    } else {
-      console.log("Email not sent as 'client' role is blocked.");
-    }
-  
-    return { success: true, message: "Order status updated", order };
+  const KitchenData = await Kitchen.findById(kitchenId);
+  if (!KitchenData) {
+    throw new CustomError(
+      statusCodes.notFound,
+      "KitchenData not found",
+      errorCodes.not_found
+    );
+  }
+
+  const order = await Order.findById(KitchenData?.order);
+  if (!order) {
+    throw new CustomError(
+      statusCodes.notFound,
+      "Order not found",
+      errorCodes.not_found
+    );
+  }
+
+  const customer = await Customer.findById(order.customerId);
+  if (!customer) {
+    throw new CustomError(
+      statusCodes.notFound,
+      "Customer not found",
+      errorCodes.not_found
+    );
+  }
+
+  KitchenData.status = updatedData.status;
+  await KitchenData.save();
+
+  const orderDetails = {
+    orderId: order._id,
+    orderStatus: updatedData?.status,
+    totalPrice: order?.totalPrice,
+    customerName: customer?.name || "N/A",
+    customerEmail: customer?.email,
+    items: order?.items,
   };
-  
-  
+
+  try {
+    const invoicePath = await generateInvoicePDF(
+      orderDetails,
+      "http://139.59.19.212:4545"
+    );
+    console.log("Invoice Public URL:", invoicePath);
+    let invoicePublicUrl;
+    // OR your custom public link
+
+    // 2. Send via WhatsApp
+    await sendWhatsAppPDF({
+      phoneNumber: `91${customer?.phone}`,
+      templateName: "invoice_details",
+      languageCode: "en",
+      bodyParams: [customer.name || "Shubham", invoicePath.publicUrl],
+      headerParams: [],
+      
+    });
+    await sendInvoiceEmail(customer.email, invoicePath.filePath);
+
+    if (fs.existsSync(invoicePath)) {
+      fs.unlinkSync(invoicePath);
+    }
+  } catch (error) {
+    console.error("Error processing invoice:", error);
+    throw new Error("Failed to generate or send invoice.");
+  }
+
+  const isBlocked = await BlockedRole.findOne({ role: "On Invoice Generate" });
+  if (isBlocked?.isBlocked) {
+    await sendEmail(
+      customer?.email,
+      "Welcome to Our Company",
+      "",
+      sentMailAfterCloseOrder(order?.totalPrice)
+    );
+  } else {
+    console.log("Email not sent as 'client' role is blocked.");
+  }
+
+  return { success: true, message: "Order status updated", order };
+};

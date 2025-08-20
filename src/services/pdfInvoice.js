@@ -6,7 +6,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const invoicesDir = path.join(__dirname, "../invoices");
+// const invoicesDir = path.join(__dirname, "../invoices");
+const invoicesDir = path.join(process.cwd(), "uploads", "invoices");
 
 const ensureDirectoryExists = (directory) => {
     if (!fs.existsSync(directory)) {
@@ -14,12 +15,14 @@ const ensureDirectoryExists = (directory) => {
     }
 };
 
-const generateInvoicePDF = async (invoiceData) => {
+const generateInvoicePDF = async (invoiceData,baseUrl) => {
     try {
         console.log("Generating invoice for:", invoiceData);
         ensureDirectoryExists(invoicesDir);
+        const fileName = `invoice-${invoiceData.orderId}.pdf`;
+        const filePath = path.join(invoicesDir, fileName);
 
-        const filePath = path.resolve(invoicesDir, `invoice-${invoiceData.orderId}.pdf`);
+        // const filePath = path.resolve(invoicesDir, `invoice-${invoiceData.orderId}.pdf`);
         const doc = new PDFDocument({ margin: 30, size: "A4" });
         const writeStream = fs.createWriteStream(filePath);
 
@@ -64,7 +67,11 @@ const generateInvoicePDF = async (invoiceData) => {
         doc.end();
 
         return new Promise((resolve, reject) => {
-            writeStream.on("finish", () => resolve(filePath));
+            writeStream.on("finish", () => {
+                 const publicUrl = `${baseUrl}/uploads/invoices/${fileName}`;
+                // resolve(filePath));
+                // resolve(publicUrl)});
+                resolve({ filePath, publicUrl })});
             writeStream.on("error", reject);
         });
     } catch (error) {
