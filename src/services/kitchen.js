@@ -180,6 +180,7 @@ export const updateOrderStatus = async (kitchenId, updatedData) => {
     }
   } catch (error) {
     console.error("Error processing invoice:", error);
+   console.error("Invoice generation/send error:", error.message, error.stack);
     throw new Error("Failed to generate or send invoice.");
   }
 
