@@ -7,7 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // const invoicesDir = path.join(__dirname, "../invoices");
-const invoicesDir = path.join(process.cwd(), "uploads", "invoices");
+// const invoicesDir = path.join(process.cwd(), "uploads", "invoices");
+const invoicesDir = path.join(__dirname, "../uploads/invoices");
+
 
 const ensureDirectoryExists = (directory) => {
     if (!fs.existsSync(directory)) {
