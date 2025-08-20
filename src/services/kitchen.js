@@ -158,7 +158,7 @@ export const updateOrderStatus = async (kitchenId, updatedData) => {
   try {
     const invoicePath = await generateInvoicePDF(
       orderDetails,
-      "http://139.59.19.212:4545"
+      "https://pos-ai.samyotech.in"
     );
     console.log("Invoice Public URL:", invoicePath);
     let invoicePublicUrl;
