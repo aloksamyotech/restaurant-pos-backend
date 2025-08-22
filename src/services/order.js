@@ -70,13 +70,13 @@ export const placeOrder = async (req) => {
   try {
     const {
       items,
-      customer_number:phone,
+      customer_number: phone,
       email,
-      order_type:type,
-      customer_name:customerName,
+      order_type: type,
+      customer_name: customerName,
       discount = 0,
       paymentMode,
-      table,
+      table, 
       employee,
       status,
       expectedTime,
@@ -85,6 +85,8 @@ export const placeOrder = async (req) => {
       chef,
       orderStatus,
     } = req?.body;
+
+   
     let customer = await Customer.findOne({ phone }).session(session);
     if (!customer) {
       customer = (
@@ -92,9 +94,8 @@ export const placeOrder = async (req) => {
       )[0];
     }
 
-
+   
     const itemNames = items.map((item) => item.name);
-
     const dbItems = await Item.find({ name: { $in: itemNames } })
       .lean()
       .session(session);
@@ -103,12 +104,10 @@ export const placeOrder = async (req) => {
       throw new Error("One or more item names are invalid");
     }
 
-   
     const enrichedItems = items.map((agentItem) => {
       const dbItem = dbItems.find(
         (db) => db.name.toLowerCase() === agentItem.name.toLowerCase()
       );
-
       return {
         id: dbItem._id,
         name: dbItem.name,
@@ -117,11 +116,25 @@ export const placeOrder = async (req) => {
         cost: dbItem.cost,
       };
     });
+
     const totalAmount = enrichedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
+    
+    if (type === "Dining" && table) {
+      const tableDoc = await Table.findOneAndUpdate(
+        { tableNumber: table },
+        { $set: { status: "Occupied" } },
+        { session, new: true }
+      );
+      if (!tableDoc) {
+        throw new Error("Invalid table number");
+      }
+    }
+
+    
     const order = (
       await Order.create(
         [
@@ -133,8 +146,7 @@ export const placeOrder = async (req) => {
             totalPrice: totalAmount,
             discount,
             paymentMode,
-            table,
-
+            table, 
             employee,
             status,
             expectedTime,
@@ -148,6 +160,7 @@ export const placeOrder = async (req) => {
       )
     )[0];
 
+   
     const payment = (
       await Payment.create(
         [
@@ -162,6 +175,7 @@ export const placeOrder = async (req) => {
       )
     )[0];
 
+   
     const invoice = (
       await Invoice.create(
         [
@@ -169,7 +183,6 @@ export const placeOrder = async (req) => {
             orderId: order._id,
             paymentId: payment._id,
             customerId: customer._id,
-
             amount: totalAmount,
             tax,
             discount,
@@ -182,12 +195,13 @@ export const placeOrder = async (req) => {
       )
     )[0];
 
+  
     const kitchen = (
       await Kitchen.create(
         [
           {
             order: order._id,
-            // table: tableNumber,
+            table, 
             status: "pending",
           },
         ],
@@ -197,15 +211,14 @@ export const placeOrder = async (req) => {
 
     await session.commitTransaction();
     session.endSession();
-    //   if (type === 'Dining' && tableId) {
-    //   await Table.findByIdAndUpdate(tableId, { status: 'Occupied' });
-    // }
+
     return {
       customerId: customer._id,
       orderId: order._id,
       paymentId: payment._id,
       invoiceId: invoice._id,
       kitchenId: kitchen._id,
+      table,
     };
   } catch (error) {
     await session.abortTransaction();
@@ -213,6 +226,7 @@ export const placeOrder = async (req) => {
     throw error;
   }
 };
+
 
 export const getOrder = async () => {
   const order = await Order?.find().populate().sort({ createdAt: -1 });

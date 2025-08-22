@@ -169,7 +169,7 @@ export const updateOrderStatus = async (kitchenId, updatedData) => {
       phoneNumber: `91${customer?.phone}`,
       templateName: "invoice_details",
       languageCode: "en",
-      bodyParams: [customer.name || "Shubham", invoicePath.publicUrl],
+      bodyParams: [customer.name || "Dear", invoicePath.publicUrl],
       headerParams: [],
       
     });
